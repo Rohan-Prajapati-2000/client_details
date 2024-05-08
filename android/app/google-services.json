@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "193709386290",
+    "project_id": "fir-storage-practice-75b13",
+    "storage_bucket": "fir-storage-practice-75b13.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:193709386290:android:18cfacf493e7ec8791ea2b",
+        "android_client_info": {
+          "package_name": "com.example.practice"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3u6EnZonPeG1kQcQjYrvJ2JgRE7_97jk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
