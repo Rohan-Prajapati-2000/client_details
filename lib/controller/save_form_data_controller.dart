@@ -19,14 +19,32 @@ class SaveFromDataController extends GetxController {
   final receivedAmount = TextEditingController();
   final bdmName = TextEditingController();
   final remark = TextEditingController();
+  final productTotalAmount = TextEditingController();
+  final productReceivedAmount = TextEditingController();
   GlobalKey<FormState> userDetailFormKey = GlobalKey<FormState>();
   String? selectedRenewType;
   String? mainType;
   String? paymentMethod;
+  late String validity;
+
 
   Future<void> saveFormDataToFirestore() async{
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
+    List<SubscriptionModel> selectedProducts = [];
+
+    selectedProducts.add(SubscriptionModel(
+      productTitle: 'Dummy',
+      validity: validity,
+      productTotalAmount: productTotalAmount.text.trim(),
+      productBalanceAmount: productReceivedAmount.text.trim(), isSelected: true,
+    ));
+
+    /// Convert selected products to a list of maps
+    List<Map<String, dynamic>> productDataList = [];
+    for (var product in selectedProducts){
+      productDataList.add(product.toJson());
+    }
 
     /// Saving data to firebase
     try{
@@ -45,6 +63,7 @@ class SaveFromDataController extends GetxController {
         'Type': selectedRenewType,
         'Main Type': mainType,
         'Payment Method': paymentMethod,
+        'Subscription List': productDataList,
       });
       
       SLoaders.successSnackBar(title: 'Data Saved Successfully');
