@@ -1,56 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:practice/controller/save_form_data_controller.dart';
 
-class ValidityDropDown extends StatefulWidget {
-  const ValidityDropDown({super.key, this.onChanged});
-  final ValueSetter<String>? onChanged;
+class ValidityDropDown extends StatelessWidget {
+  final String selectedValue;
+  final Function(String) onSelected;
 
-  @override
-  State<ValidityDropDown> createState() => _ValidityDropDownState();
-}
-
-class _ValidityDropDownState extends State<ValidityDropDown> {
-  final List<String> _list = [
-    'Select',
-    '1 Month',
-    '2 Months',
-    '3 Months',
-    '4 Months',
-    '6 Months',
-    '1 Year'
-  ];
-
-  late String selectedValue;
-  @override
-  void initState() {
-    super.initState();
-    selectedValue = _list[0];
-  }
+  ValidityDropDown({
+    required this.selectedValue,
+    required this.onSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
-    List<DropdownMenuItem<String>> items = [];
-    for (String i in _list) {
-      items.add(DropdownMenuItem<String>(
-        child: Text(i),
-        value: i,
-      ));
-    }
-
-    return DropdownButtonFormField<String>(
-        value: selectedValue,
-        hint: const Text('Select Validity'),
-        items: items,
-        onChanged: (val) {
-          setState(() {
-            selectedValue = val!;
-            if (selectedValue == _list[0]) {
-              _list.removeAt(0);
-              selectedValue = '';
-            }
-            widget.onChanged?.call(selectedValue);
-            SaveFromDataController.instance.validity = selectedValue;
-          });
-        });
+    return DropdownButton<String>(
+      hint: Text('Select Validity'),
+      value: selectedValue.isEmpty ? null : selectedValue,
+      items: <String>['1 month', '3 months', '6 months', '12 months']
+          .map((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      onChanged: (value) {
+        onSelected(value!);
+      },
+    );
   }
 }

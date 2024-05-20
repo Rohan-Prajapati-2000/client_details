@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:practice/model/subscription_model.dart';
 import 'package:practice/utils/popups/loaders.dart';
+
+import '../model/subscription_model.dart';
 
 class SaveFromDataController extends GetxController {
   static SaveFromDataController get instance => Get.find();
@@ -19,35 +20,21 @@ class SaveFromDataController extends GetxController {
   final receivedAmount = TextEditingController();
   final bdmName = TextEditingController();
   final remark = TextEditingController();
-  final productTotalAmount = TextEditingController();
-  final productReceivedAmount = TextEditingController();
   GlobalKey<FormState> userDetailFormKey = GlobalKey<FormState>();
   String? selectedRenewType;
   String? mainType;
   String? paymentMethod;
-  late String validity;
 
+  final subscriptions = <SubscriptionModel>[].obs;
 
-  Future<void> saveFormDataToFirestore() async{
+  void addSubscription(SubscriptionModel subscription) {
+    subscriptions.add(subscription);
+  }
+
+  Future<void> saveFormDataToFirestore() async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
-    List<SubscriptionModel> selectedProducts = [];
-
-    selectedProducts.add(SubscriptionModel(
-      productTitle: 'Dummy',
-      validity: validity,
-      productTotalAmount: productTotalAmount.text.trim(),
-      productBalanceAmount: productReceivedAmount.text.trim(), isSelected: true,
-    ));
-
-    /// Convert selected products to a list of maps
-    List<Map<String, dynamic>> productDataList = [];
-    for (var product in selectedProducts){
-      productDataList.add(product.toJson());
-    }
-
-    /// Saving data to firebase
-    try{
+    try {
       await firebaseFirestore.collection('client_details').add({
         'Date': date.text.trim(),
         'Company Name': companyName.text.trim(),
@@ -63,12 +50,11 @@ class SaveFromDataController extends GetxController {
         'Type': selectedRenewType,
         'Main Type': mainType,
         'Payment Method': paymentMethod,
-        'Subscription List': productDataList,
+        'Subscriptions': subscriptions.map((sub) => sub.toJson()).toList(),
       });
-      
+
       SLoaders.successSnackBar(title: 'Data Saved Successfully');
-      
-    }catch (e) {
+    } catch (e) {
       SLoaders.errorSnackBar(title: 'Error: $e');
     }
   }

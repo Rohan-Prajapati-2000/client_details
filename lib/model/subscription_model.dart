@@ -7,10 +7,10 @@ class SubscriptionModel {
 
   SubscriptionModel(
       {required this.isSelected,
-      required this.productTitle,
-      required this.validity,
-      required this.productTotalAmount,
-      required this.productBalanceAmount});
+        required this.productTitle,
+        required this.validity,
+        required this.productTotalAmount,
+        required this.productBalanceAmount});
 
   /// Json Format
   toJson() {
@@ -27,8 +27,8 @@ class SubscriptionModel {
     return SubscriptionModel(
       productTitle: json['Product Title'] ?? '',
       validity: json['Validity'] ?? '',
-      productTotalAmount: json['Total Amount'] ?? '',
-      productBalanceAmount: json['Balance Amount'] ?? '',
+      productTotalAmount: json['Product Total Amount'] ?? '',
+      productBalanceAmount: json['Product Balance Amount'] ?? '',
       isSelected: json['Is Selected'],
     );
   }

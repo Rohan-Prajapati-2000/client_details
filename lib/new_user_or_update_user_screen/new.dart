@@ -51,12 +51,12 @@ class _NewUserState extends State<NewUser> {
                   width: 150,
                   child: TextButton(
                     style: TextButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)
-                      ),
-                      side: BorderSide(
-                        color: Colors.orange,
-                      )
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)
+                        ),
+                        side: BorderSide(
+                          color: Colors.orange,
+                        )
                     ),
                     onPressed: () => Get.back(),
                     child: Text('Back', style: Theme.of(context).textTheme.bodyMedium!.apply(color: Colors.orange)),
@@ -82,7 +82,7 @@ class _NewUserState extends State<NewUser> {
                     SizedBox(width: SSizes.spaceBtwItems/2),
 
                     Expanded(
-                        child: RenewNew(),
+                      child: RenewNew(),
                     ),
 
                     Expanded(flex: 6, child: Container())
@@ -283,15 +283,15 @@ class _NewUserState extends State<NewUser> {
                   height: 40,
                   width: 150,
                   child: TextButton(
-                    style: TextButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: BorderSide(
-                          width: 1,
-                          color: Colors.red
-                        )
-                      )
-                    ),
+                      style: TextButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              side: BorderSide(
+                                  width: 1,
+                                  color: Colors.red
+                              )
+                          )
+                      ),
                       onPressed: (){},
                       child: Text('Clear Form', style: Theme.of(context).textTheme.labelLarge!.apply(color: Colors.red))
                   ),
@@ -301,23 +301,23 @@ class _NewUserState extends State<NewUser> {
                 SizedBox(height: SSizes.spaceBtwItems),
 
                 SizedBox(
-                  height: 40,
-                  width: 150,
-                  child: TextButton(
-                      style: TextButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                              side: BorderSide(
-                                  width: 1,
-                                  color: Colors.green
-                              )
-                          )
-                      ),
-                      onPressed: (){
-                        controller.saveFormDataToFirestore();
-                      },
-                      child: Text('Submit', style: Theme.of(context).textTheme.labelLarge!.apply(color: Colors.green)))
-                  ),
+                    height: 40,
+                    width: 150,
+                    child: TextButton(
+                        style: TextButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                side: BorderSide(
+                                    width: 1,
+                                    color: Colors.green
+                                )
+                            )
+                        ),
+                        onPressed: (){
+                          controller.saveFormDataToFirestore();
+                        },
+                        child: Text('Submit', style: Theme.of(context).textTheme.labelLarge!.apply(color: Colors.green)))
+                ),
 
               ],
             ),
@@ -327,4 +327,3 @@ class _NewUserState extends State<NewUser> {
     );
   }
 }
-
