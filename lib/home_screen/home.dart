@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:practice/my_user_details.dart';
-import 'package:practice/utils/constants/sizes.dart';
 import 'package:practice/widgets/home_header.dart';
 
 class MyHomePage extends StatelessWidget {

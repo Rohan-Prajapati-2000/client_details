@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:practice/utils/theme/theme.dart';
 import 'firebase_options.dart';
-import 'home.dart';
+import 'home_screen/home.dart';
 
 void main() async{
   await Firebase.initializeApp(

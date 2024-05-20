@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:practice/new_user_or_update_user_screen/new.dart';
 
-import '../my_user_details.dart';
+import '../home_screen/my_user_details.dart';
 import '../utils/constants/colors.dart';
 import '../utils/constants/sizes.dart';
 import 'button_icon_with_text.dart';

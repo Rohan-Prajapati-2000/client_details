@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:practice/utils/constants/sizes.dart';
-import '../../controller/save_form_data_controller.dart';
+import '../controller/save_form_data_controller.dart';
 import 'main_heading.dart';
 import 'validity_dropdown.dart';
 

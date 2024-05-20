@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:practice/controller/save_form_data_controller.dart';
+
+import '../controller/save_form_data_controller.dart';
 
 class SelfTally extends StatefulWidget {
   SelfTally({super.key});

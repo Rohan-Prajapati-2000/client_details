@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import 'user_details_model.dart';
+import 'model/user_details_model.dart';
 
 class MyUserDetails extends StatefulWidget {
   @override
