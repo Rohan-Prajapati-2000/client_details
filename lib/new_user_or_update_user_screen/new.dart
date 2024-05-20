@@ -292,7 +292,9 @@ class _NewUserState extends State<NewUser> {
                               )
                           )
                       ),
-                      onPressed: (){},
+                      onPressed: (){
+                        controller.clearFormFields();
+                      },
                       child: Text('Clear Form', style: Theme.of(context).textTheme.labelLarge!.apply(color: Colors.red))
                   ),
                 ),

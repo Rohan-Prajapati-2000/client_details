@@ -129,7 +129,41 @@ class SaveFromDataController extends GetxController {
         ),
       );
     }
-
     saveFormDataToFirestore();
+    clearFormFields();
   }
+
+  /// method to clear all fields
+  void clearFormFields(){
+    date.clear();
+    companyName.clear();
+    gstNumber.clear();
+    address.clear();
+    contactPerson.clear();
+    contactNumber.clear();
+    contactEmail.clear();
+    totalAmount.clear();
+    receivedAmount.clear();
+    bdmName.clear();
+    remark.clear();
+    isCheckedSEO.value = false;
+    isCheckedVirtualTour.value = false;
+    isCheckedGBPM.value = false;
+    isCheckedZKSEO.value = false;
+    totalAmountSEO.clear();
+    receivedAmountSEO.clear();
+    validitySEO.value = '';
+    totalAmountVirtualTour.clear();
+    receivedAmountVirtualTour.clear();
+    validityVirtualTour.value = '';
+    totalAmountGBPM.clear();
+    receivedAmountGBPM.clear();
+    validityGBPM.value = '';
+    totalAmountZKSEO.clear();
+    receivedAmountZKSEO.clear();
+    validityZKSEO.value = '';
+    subscriptions.clear();
+  }
+
+
 }
