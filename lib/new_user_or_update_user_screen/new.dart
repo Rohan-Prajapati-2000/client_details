@@ -314,7 +314,7 @@ class _NewUserState extends State<NewUser> {
                             )
                         ),
                         onPressed: (){
-                          controller.saveFormDataToFirestore();
+                          controller.saveSubscriptions();
                         },
                         child: Text('Submit', style: Theme.of(context).textTheme.labelLarge!.apply(color: Colors.green)))
                 ),

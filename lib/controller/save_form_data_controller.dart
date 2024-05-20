@@ -8,7 +8,7 @@ import '../model/subscription_model.dart';
 class SaveFromDataController extends GetxController {
   static SaveFromDataController get instance => Get.find();
 
-  /// Variable
+  // Variables for client details form
   final date = TextEditingController();
   final companyName = TextEditingController();
   final gstNumber = TextEditingController();
@@ -24,6 +24,28 @@ class SaveFromDataController extends GetxController {
   String? selectedRenewType;
   String? mainType;
   String? paymentMethod;
+
+  // Variables for subscription details
+  final isCheckedSEO = false.obs;
+  final isCheckedVirtualTour = false.obs;
+  final isCheckedGBPM = false.obs;
+  final isCheckedZKSEO = false.obs;
+
+  final totalAmountSEO = TextEditingController();
+  final receivedAmountSEO = TextEditingController();
+  final validitySEO = ''.obs;
+
+  final totalAmountVirtualTour = TextEditingController();
+  final receivedAmountVirtualTour = TextEditingController();
+  final validityVirtualTour = ''.obs;
+
+  final totalAmountGBPM = TextEditingController();
+  final receivedAmountGBPM = TextEditingController();
+  final validityGBPM = ''.obs;
+
+  final totalAmountZKSEO = TextEditingController();
+  final receivedAmountZKSEO = TextEditingController();
+  final validityZKSEO = ''.obs;
 
   final subscriptions = <SubscriptionModel>[].obs;
 
@@ -57,5 +79,57 @@ class SaveFromDataController extends GetxController {
     } catch (e) {
       SLoaders.errorSnackBar(title: 'Error: $e');
     }
+  }
+
+  void saveSubscriptions() {
+    if (isCheckedSEO.value) {
+      addSubscription(
+        SubscriptionModel(
+          isSelected: true,
+          productTitle: 'Local Keyword SEO',
+          validity: validitySEO.value,
+          productTotalAmount: totalAmountSEO.text,
+          productBalanceAmount: receivedAmountSEO.text,
+        ),
+      );
+    }
+
+    if (isCheckedVirtualTour.value) {
+      addSubscription(
+        SubscriptionModel(
+          isSelected: true,
+          productTitle: 'Virtual Tour',
+          validity: validityVirtualTour.value,
+          productTotalAmount: totalAmountVirtualTour.text,
+          productBalanceAmount: receivedAmountVirtualTour.text,
+        ),
+      );
+    }
+
+    if (isCheckedGBPM.value) {
+      addSubscription(
+        SubscriptionModel(
+          isSelected: true,
+          productTitle: 'Google Business Profile Management',
+          validity: validityGBPM.value,
+          productTotalAmount: totalAmountGBPM.text,
+          productBalanceAmount: receivedAmountGBPM.text,
+        ),
+      );
+    }
+
+    if (isCheckedZKSEO.value) {
+      addSubscription(
+        SubscriptionModel(
+          isSelected: true,
+          productTitle: 'Zonal Keyword SEO',
+          validity: validityZKSEO.value,
+          productTotalAmount: totalAmountZKSEO.text,
+          productBalanceAmount: receivedAmountZKSEO.text,
+        ),
+      );
+    }
+
+    saveFormDataToFirestore();
   }
 }
