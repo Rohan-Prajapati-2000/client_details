@@ -1,4 +1,8 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:practice/utils/popups/loaders.dart';
@@ -24,6 +28,8 @@ class SaveFromDataController extends GetxController {
   String? selectedRenewType;
   String? mainType;
   String? paymentMethod;
+  Uint8List? selectedImageBytes;
+  File? selectedImageFile;
 
   // Variables for subscription details
   final isCheckedSEO = false.obs;
@@ -53,8 +59,34 @@ class SaveFromDataController extends GetxController {
     subscriptions.add(subscription);
   }
 
+  Future<String?> uploadImageToFirestore() async{
+    try{
+      final storageRef = FirebaseStorage.instance.ref();
+      final imageRef = storageRef.child('images/${DateTime.now().millisecondsSinceEpoch}');
+
+      UploadTask uploadTask;
+
+      if(selectedImageBytes != null) {
+        uploadTask = imageRef.putData(selectedImageBytes!);
+      } else if (selectedImageFile != null){
+        uploadTask = imageRef.putFile(selectedImageFile!);
+      } else {
+        return null;
+      }
+
+      TaskSnapshot snapshot = await uploadTask;
+      return await snapshot.ref.getDownloadURL();
+    } catch (e) {
+      SLoaders.errorSnackBar(title: 'Image upload error: $e');
+      return null;
+    }
+
+  }
+
+
   Future<void> saveFormDataToFirestore() async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    String? imageUrl = await uploadImageToFirestore();
 
     try {
       await firebaseFirestore.collection('client_details').add({
@@ -72,9 +104,12 @@ class SaveFromDataController extends GetxController {
         'Type': selectedRenewType,
         'Main Type': mainType,
         'Payment Method': paymentMethod,
+        'Image URL': imageUrl,
         'Subscriptions': subscriptions.map((sub) => sub.toJson()).toList(),
       });
 
+
+      clearFormFields();
       SLoaders.successSnackBar(title: 'Data Saved Successfully');
     } catch (e) {
       SLoaders.errorSnackBar(title: 'Error: $e');
@@ -130,7 +165,6 @@ class SaveFromDataController extends GetxController {
       );
     }
     saveFormDataToFirestore();
-    clearFormFields();
   }
 
   /// method to clear all fields
@@ -163,6 +197,8 @@ class SaveFromDataController extends GetxController {
     receivedAmountZKSEO.clear();
     validityZKSEO.value = '';
     subscriptions.clear();
+    selectedImageFile=null;
+    selectedImageBytes=null;
   }
 
 

@@ -1,3 +1,5 @@
+import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:practice/new_user_or_update_user_screen/widgets/renew_new.dart';
@@ -5,6 +7,7 @@ import 'package:practice/new_user_or_update_user_screen/widgets/self_tally.dart'
 import 'package:practice/utils/constants/sizes.dart';
 
 import 'controller/save_form_data_controller.dart';
+import 'widgets/image_picker.dart';
 import 'widgets/payment_method.dart';
 import 'widgets/price_details_menu.dart';
 
@@ -276,6 +279,9 @@ class _NewUserState extends State<NewUser> {
                     Expanded(child: Container())
                   ],
                 ),
+                SizedBox(height: SSizes.spaceBtwItems),
+
+                ImagePickerWidget(),
 
                 SizedBox(height: SSizes.spaceBtwItems),
 
