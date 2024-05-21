@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -281,7 +283,9 @@ class _NewUserState extends State<NewUser> {
                 ),
                 SizedBox(height: SSizes.spaceBtwItems),
 
-                ImagePickerWidget(),
+                ImagePickerWidget(onImageSelected: (Uint8List? imageBytes) {
+                  Get.find<SaveFromDataController>().selectedImageBytes = imageBytes;
+                },),
 
                 SizedBox(height: SSizes.spaceBtwItems),
 

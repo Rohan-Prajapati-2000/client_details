@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dotted_border/dotted_border.dart';
@@ -8,25 +7,24 @@ import 'package:image_picker/image_picker.dart';
 import '../../utils/constants/sizes.dart';
 
 class ImagePickerWidget extends StatefulWidget {
-  ImagePickerWidget({
-    super.key,
-  });
+  final Function(Uint8List?) onImageSelected; // Updated to accept nullable Uint8List
+
+  ImagePickerWidget({Key? key, required this.onImageSelected}) : super(key: key);
 
   @override
   _ImagePickerWidgetState createState() => _ImagePickerWidgetState();
 }
 
 class _ImagePickerWidgetState extends State<ImagePickerWidget> {
-  File? selectedImageFile;
-  Uint8List? selectedImageBytes;
+  Uint8List? selectedImageBytes; // Changed to nullable Uint8List
 
   Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
-      selectedImageFile = File(image.path);
       selectedImageBytes = await image.readAsBytes();
+      widget.onImageSelected(selectedImageBytes); // Pass selectedImageBytes to the callback
       setState(() {});
     }
   }
@@ -46,7 +44,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
               borderRadius: BorderRadius.circular(SSizes.borderRadiusMd),
               image: DecorationImage(
                 image: MemoryImage(selectedImageBytes!),
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
               ),
             ),
           )
