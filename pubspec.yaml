@@ -54,6 +54,7 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   carousel_slider: ^4.2.1
   provider: ^6.1.2
+  photo_view: ^0.15.0
 
   #  Product Specific
   readmore: ^3.0.0
@@ -67,6 +68,7 @@ dependencies:
   firebase_storage: ^11.7.0
   cached_network_image: ^3.3.1
   dotted_border: ^2.1.0
+  html: ^0.15.4
 
 dev_dependencies:
   flutter_test:

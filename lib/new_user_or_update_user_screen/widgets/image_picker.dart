@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../utils/constants/sizes.dart';
 
 class ImagePickerWidget extends StatefulWidget {
-  final Function(Uint8List?) onImageSelected; // Updated to accept nullable Uint8List
+  final Function(List<Uint8List?>) onImageSelected;
 
   ImagePickerWidget({Key? key, required this.onImageSelected}) : super(key: key);
 
@@ -16,39 +16,45 @@ class ImagePickerWidget extends StatefulWidget {
 }
 
 class _ImagePickerWidgetState extends State<ImagePickerWidget> {
-  Uint8List? selectedImageBytes; // Changed to nullable Uint8List
+  List<Uint8List?> selectedImageBytesList = [];
 
-  Future<void> pickImage() async {
+  Future<void> pickImages() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final List<XFile>? images = await picker.pickMultiImage();
 
-    if (image != null) {
-      selectedImageBytes = await image.readAsBytes();
-      widget.onImageSelected(selectedImageBytes); // Pass selectedImageBytes to the callback
+    if (images != null && images.isNotEmpty) {
+      selectedImageBytesList = await Future.wait(images.map((image) => image.readAsBytes()));
+      widget.onImageSelected(selectedImageBytesList);
       setState(() {});
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
       children: [
-        GestureDetector(
-          onTap: () => pickImage(),
-          child: selectedImageBytes != null
-              ? Container(
-            height: 100,
-            width: 100,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(SSizes.borderRadiusMd),
-              image: DecorationImage(
-                image: MemoryImage(selectedImageBytes!),
-                fit: BoxFit.fill,
+        Wrap(
+          spacing: 10,
+          children: selectedImageBytesList.map((imageBytes) {
+            return imageBytes != null
+                ? Container(
+              height: 100,
+              width: 100,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(SSizes.borderRadiusMd),
+                image: DecorationImage(
+                  image: MemoryImage(imageBytes),
+                  fit: BoxFit.fill,
+                ),
               ),
-            ),
-          )
-              : DottedBorder(
+            )
+                : SizedBox();
+          }).toList(),
+        ),
+        SizedBox(height: SSizes.spaceBtwItems),
+        GestureDetector(
+          onTap: pickImages,
+          child: DottedBorder(
             borderType: BorderType.RRect,
             radius: Radius.circular(SSizes.borderRadiusMd),
             dashPattern: [6, 3],
@@ -60,7 +66,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.image),
-                  Text('Select Image'),
+                  Text('Select Images'),
                 ],
               ),
             ),

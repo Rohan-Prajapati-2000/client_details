@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:core';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -27,7 +28,7 @@ class SaveFromDataController extends GetxController {
   String? selectedRenewType;
   String? mainType;
   String? paymentMethod;
-  Uint8List? selectedImageBytes;
+  List <Uint8List?> selectedImageBytesList = [];
 
   // Variables for subscription details
   final isCheckedSEO = false.obs;
@@ -57,12 +58,14 @@ class SaveFromDataController extends GetxController {
     subscriptions.add(subscription);
   }
 
-  Future<String?> uploadImageToFirestore() async {
+  Future<List<String>?> uploadImageToFirestore() async {
     try {
-      if (selectedImageBytes != null) {
-        // If image is already in bytes, convert to base64 directly
-        String base64Image = base64Encode(selectedImageBytes!);
-        return base64Image;
+      if(selectedImageBytesList.isNotEmpty){
+        List<String> base64Images = selectedImageBytesList
+            .where((image) => image != null)
+            .map((image) => base64Encode(image!))
+            .toList();
+        return base64Images;
       } else {
         return null;
       }
@@ -75,7 +78,7 @@ class SaveFromDataController extends GetxController {
 
   Future<void> saveFormDataToFirestore() async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-    String? imageBase64 = await uploadImageToFirestore();
+    List<String>? imageBase64List = await uploadImageToFirestore();
 
     try {
       await firebaseFirestore.collection('client_details').add({
@@ -93,7 +96,7 @@ class SaveFromDataController extends GetxController {
         'Type': selectedRenewType,
         'Main Type': mainType,
         'Payment Method': paymentMethod,
-        'Image URL': imageBase64,
+        'Image URL': imageBase64List,
         'Subscriptions': subscriptions.map((sub) => sub.toJson()).toList(),
       });
 
@@ -185,6 +188,6 @@ class SaveFromDataController extends GetxController {
     receivedAmountZKSEO.clear();
     validityZKSEO.value = '';
     subscriptions.clear();
-    selectedImageBytes = null;
+    selectedImageBytesList.clear();
   }
 }

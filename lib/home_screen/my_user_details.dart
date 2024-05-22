@@ -24,13 +24,16 @@ class _MyUserDetailsState extends State<MyUserDetails> {
     }
   }
 
-  Uint8List? decodeBase64(String? base64String){
-    if(base64String != null && base64String.isNotEmpty){
-      return base64Decode(base64String);
+  Uint8List? decodeBase64(String? base64String) {
+    if (base64String != null && base64String.isNotEmpty) {
+      try {
+        return base64Decode(base64String);
+      } catch (e) {
+        print('Failed to decode base64 string: $e');
+      }
     }
     return null;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -66,36 +69,50 @@ class _MyUserDetailsState extends State<MyUserDetails> {
                 DataColumn(label: Text('Contact Number')),
                 DataColumn(label: Text('BDM Name')),
                 DataColumn(label: Text('Balance Amount')),
-                DataColumn(label: Text('Image'))
+                DataColumn(label: Text('Images'))
               ],
               rows: userDetails
                   .asMap()
                   .entries
                   .map((data) => DataRow(
-                        cells: [
-                          DataCell(Text('${data.key + 1}')),
-                          DataCell(Text(data.value.companyName)),
-                          DataCell(Text(data.value.type)),
-                          DataCell(Text(data.value.date)),
-                          DataCell(Text(data.value.gstNo)),
-                          DataCell(Text(data.value.contactPerson)),
-                          DataCell(Text(data.value.contactNumber)),
-                          DataCell(Text(data.value.bdmName)),
-                          DataCell(Text(_calculateBalanceAmount(
-                              data.value.totalAmount,
-                              data.value.receivedAmount))),
-                          DataCell(data.value.imageURL != null &&
-                                  data.value.imageURL.isNotEmpty
-                              ? GestureDetector(
-                                  onTap: () => Get.to(()=> FullImageViewer(imageURL: data.value.imageURL)),
-                                  child: Container(
-                                      width: 40,
-                                      height: 40,
-                                      child:
-                                          Image.memory(decodeBase64(data.value.imageURL)!)))
-                              : Text('No Image Available'))
-                        ],
-                      ))
+                cells: [
+                  DataCell(Text('${data.key + 1}')),
+                  DataCell(Text(data.value.companyName)),
+                  DataCell(Text(data.value.type)),
+                  DataCell(Text(data.value.date)),
+                  DataCell(Text(data.value.gstNo)),
+                  DataCell(Text(data.value.contactPerson)),
+                  DataCell(Text(data.value.contactNumber)),
+                  DataCell(Text(data.value.bdmName)),
+                  DataCell(Text(_calculateBalanceAmount(
+                      data.value.totalAmount,
+                      data.value.receivedAmount))),
+                  DataCell(data.value.imageList.isNotEmpty
+                      ? GestureDetector(
+                    onTap: () => Get.to(() => FullImageViewer(
+                        imageList: data.value.imageList)),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      child: Builder(
+                        builder: (context) {
+                          String firstImageBase64 = data.value.imageList.first;
+                          Uint8List? imageBytes = decodeBase64(firstImageBase64);
+                          if (imageBytes != null) {
+                            return Image.memory(
+                              imageBytes,
+                              fit: BoxFit.cover,
+                            );
+                          } else {
+                            return Text('Invalid Image');
+                          }
+                        },
+                      ),
+                    ),
+                  )
+                      : Text('No Image')),
+                ],
+              ))
                   .toList(),
             ),
           ),

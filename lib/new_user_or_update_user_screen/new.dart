@@ -283,8 +283,8 @@ class _NewUserState extends State<NewUser> {
                 ),
                 SizedBox(height: SSizes.spaceBtwItems),
 
-                ImagePickerWidget(onImageSelected: (Uint8List? imageBytes) {
-                  Get.find<SaveFromDataController>().selectedImageBytes = imageBytes;
+                ImagePickerWidget(onImageSelected: (List<Uint8List?> imageBytesList) {
+                  Get.find<SaveFromDataController>().selectedImageBytesList = imageBytesList;
                 },),
 
                 SizedBox(height: SSizes.spaceBtwItems),
