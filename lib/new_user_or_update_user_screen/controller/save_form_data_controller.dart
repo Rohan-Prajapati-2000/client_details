@@ -28,7 +28,7 @@ class SaveFromDataController extends GetxController {
   String? selectedRenewType;
   String? mainType;
   String? paymentMethod;
-  List <Uint8List?> selectedImageBytesList = [];
+  List<Uint8List?> selectedImageBytesList = [];
 
   // Variables for subscription details
   final isCheckedSEO = false.obs;
@@ -60,7 +60,7 @@ class SaveFromDataController extends GetxController {
 
   Future<List<String>?> uploadImageToFirestore() async {
     try {
-      if(selectedImageBytesList.isNotEmpty){
+      if (selectedImageBytesList.isNotEmpty) {
         List<String> base64Images = selectedImageBytesList
             .where((image) => image != null)
             .map((image) => base64Encode(image!))
@@ -76,12 +76,30 @@ class SaveFromDataController extends GetxController {
     }
   }
 
+  Future<int> _fetchHighestSrNo() async {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('client_details')
+        .orderBy('Sr No', descending: true)
+        .limit(1)
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      return int.parse(snapshot.docs.first['Sr No']);
+    } else {
+      return 0; // No documents exist, start with 0
+    }
+  }
+
   Future<void> saveFormDataToFirestore() async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     List<String>? imageBase64List = await uploadImageToFirestore();
 
     try {
-      await firebaseFirestore.collection('client_details').add({
+      int highestSrNo = await _fetchHighestSrNo();
+      int newSrNo = highestSrNo + 1;
+
+      await firebaseFirestore.collection('client_details').doc(newSrNo.toString()).set({
+        'Sr No': newSrNo.toString(),
         'Date': date.text.trim(),
         'Company Name': companyName.text.trim(),
         'GST No': gstNumber.text.trim(),

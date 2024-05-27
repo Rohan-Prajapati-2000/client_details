@@ -29,26 +29,55 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
     }
   }
 
+  void removeImage(int index) {
+    setState(() {
+      selectedImageBytesList.removeAt(index);
+      widget.onImageSelected(selectedImageBytesList);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Wrap(
           spacing: 10,
-          children: selectedImageBytesList.map((imageBytes) {
-            return imageBytes != null
-                ? Container(
-              height: 100,
-              width: 100,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(SSizes.borderRadiusMd),
-                image: DecorationImage(
-                  image: MemoryImage(imageBytes),
-                  fit: BoxFit.fill,
+          children: selectedImageBytesList.asMap().entries.map((entry) {
+            int index = entry.key;
+            Uint8List? imageBytes = entry.value;
+
+            return Stack(
+              children: [
+                Container(
+                  height: 100,
+                  width: 100,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(SSizes.borderRadiusMd),
+                    image: DecorationImage(
+                      image: MemoryImage(imageBytes!),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
                 ),
-              ),
-            )
-                : SizedBox();
+                Positioned(
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: () => removeImage(index),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
           }).toList(),
         ),
         SizedBox(height: SSizes.spaceBtwItems),

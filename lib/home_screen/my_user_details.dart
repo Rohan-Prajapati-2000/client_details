@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:practice/home_screen/full_image.dart';
+import 'package:practice/utils/popups/loaders.dart';
 
 import 'model/user_details_model.dart';
 
@@ -33,6 +34,46 @@ class _MyUserDetailsState extends State<MyUserDetails> {
       }
     }
     return null;
+  }
+
+  Future<void> _editReceivedAmount(MyUserDetailsModel userDetail) async {
+    TextEditingController _receivedAmountController =
+    TextEditingController(text: userDetail.receivedAmount);
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Edit Received Amount'),
+        content: TextField(
+          controller: _receivedAmountController,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(labelText: 'Received Amount'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              try {
+                int.parse(_receivedAmountController.text);
+                await FirebaseFirestore.instance
+                    .collection('client_details')
+                    .doc(userDetail.srNo)
+                    .update({
+                  'Received Amount': _receivedAmountController.text,
+                });
+                Navigator.pop(context);
+              } catch (e) {
+                SLoaders.errorSnackBar(title: 'Error : $e');
+              }
+            },
+            child: Text('Save'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -84,9 +125,18 @@ class _MyUserDetailsState extends State<MyUserDetails> {
                   DataCell(Text(data.value.contactPerson)),
                   DataCell(Text(data.value.contactNumber)),
                   DataCell(Text(data.value.bdmName)),
-                  DataCell(Text(_calculateBalanceAmount(
-                      data.value.totalAmount,
-                      data.value.receivedAmount))),
+                  DataCell(Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(_calculateBalanceAmount(
+                          data.value.totalAmount,
+                          data.value.receivedAmount)),
+                      IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () => _editReceivedAmount(data.value),
+                      ),
+                    ],
+                  )),
                   DataCell(data.value.imageList.isNotEmpty
                       ? GestureDetector(
                     onTap: () => Get.to(() => FullImageViewer(
