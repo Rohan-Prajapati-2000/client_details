@@ -9,20 +9,25 @@ class MyUserDetailsModel {
   final String bdmName;
   final String totalAmount;
   final String receivedAmount;
+  final String? balancePaymentAmount;
+  final String? balancePaymentDate;
   List<String> imageList;
 
-  MyUserDetailsModel(
-      {required this.srNo,
-        required this.companyName,
-        required this.type,
-        required this.date,
-        required this.gstNo,
-        required this.contactPerson,
-        required this.contactNumber,
-        required this.bdmName,
-        required this.totalAmount,
-        required this.receivedAmount,
-        required this.imageList});
+  MyUserDetailsModel({
+    required this.srNo,
+    required this.companyName,
+    required this.type,
+    required this.date,
+    required this.gstNo,
+    required this.contactPerson,
+    required this.contactNumber,
+    required this.bdmName,
+    required this.totalAmount,
+    required this.receivedAmount,
+    this.balancePaymentAmount,
+    this.balancePaymentDate,
+    required this.imageList,
+  });
 
   factory MyUserDetailsModel.fromJson(Map<String, dynamic> json) {
     return MyUserDetailsModel(
@@ -36,6 +41,8 @@ class MyUserDetailsModel {
       bdmName: json['BDM Name'] ?? '',
       totalAmount: json['Total Amount'] ?? '',
       receivedAmount: json['Received Amount'] ?? '',
+      balancePaymentAmount: json['Balance Payment Amount'],
+      balancePaymentDate: json['Balance Payment Date'],
       imageList: (json['Image URL'] is List)
           ? List<String>.from(json['Image URL'])
           : [],

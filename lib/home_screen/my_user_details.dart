@@ -2,10 +2,11 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:practice/home_screen/full_image.dart';
-import 'package:practice/utils/popups/loaders.dart';
+import 'package:practice/utils/constants/sizes.dart';
 
 import 'model/user_details_model.dart';
 
@@ -15,11 +16,14 @@ class MyUserDetails extends StatefulWidget {
 }
 
 class _MyUserDetailsState extends State<MyUserDetails> {
-  String _calculateBalanceAmount(String totalAmount, String receivedAmount) {
+  String _calculateBalanceAmount(String totalAmount, String receivedAmount,
+      {String? balancePaymentAmount}) {
     try {
       int total = int.parse(totalAmount);
       int received = int.parse(receivedAmount);
-      return (total - received).toString();
+      int balancePayment =
+          balancePaymentAmount != null ? int.parse(balancePaymentAmount) : 0;
+      return (total - received - balancePayment).toString();
     } catch (e) {
       return 'Invalid';
     }
@@ -36,43 +40,81 @@ class _MyUserDetailsState extends State<MyUserDetails> {
     return null;
   }
 
-  Future<void> _editReceivedAmount(MyUserDetailsModel userDetail) async {
-    TextEditingController _receivedAmountController =
-    TextEditingController(text: userDetail.receivedAmount);
+  Future<void> _showEditDialog(
+      BuildContext context, MyUserDetailsModel user) async {
+    TextEditingController paymentController = TextEditingController();
+    DateTime selectedDate = DateTime.now();
 
     await showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Edit Received Amount'),
-        content: TextField(
-          controller: _receivedAmountController,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(labelText: 'Received Amount'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Edit Payment'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Total Amount: ${user.totalAmount}'),
+              SizedBox(height: SSizes.spaceBtwItems/2),
+              Text(
+                  'Balance Amount: ${_calculateBalanceAmount(user.totalAmount, user.receivedAmount, balancePaymentAmount: user.balancePaymentAmount)}'),
+              SizedBox(height: SSizes.spaceBtwItems/2),
+              TextField(
+                controller: paymentController,
+                decoration: InputDecoration(labelText: 'Enter Amount'),
+                keyboardType: TextInputType.number,
+              ),
+              SizedBox(height: SSizes.spaceBtwItems/2),
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final DateTime? picked = await showDatePicker(
+                      context: context,
+                      initialDate: selectedDate,
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2101),
+                    );
+                    if (picked != null && picked != selectedDate) {
+                      selectedDate = picked;
+                    }
+                  },
+                  child: Text('Select Date'),
+                ),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () async {
-              try {
-                int.parse(_receivedAmountController.text);
-                await FirebaseFirestore.instance
-                    .collection('client_details')
-                    .doc(userDetail.srNo)
-                    .update({
-                  'Received Amount': _receivedAmountController.text,
-                });
-                Navigator.pop(context);
-              } catch (e) {
-                SLoaders.errorSnackBar(title: 'Error : $e');
-              }
-            },
-            child: Text('Save'),
-          ),
-        ],
-      ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                try {
+                  int paymentAmount = int.parse(paymentController.text);
+                  String formattedDate =
+                      "${selectedDate.toLocal()}".split(' ')[0];
+                  await FirebaseFirestore.instance
+                      .collection('client_details')
+                      .doc(user.srNo)
+                      .update({
+                    'Balance Payment Amount': paymentAmount.toString(),
+                    'Balance Payment Date': formattedDate,
+                  });
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  print('Error updating payment: $e');
+                }
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -110,59 +152,76 @@ class _MyUserDetailsState extends State<MyUserDetails> {
                 DataColumn(label: Text('Contact Number')),
                 DataColumn(label: Text('BDM Name')),
                 DataColumn(label: Text('Balance Amount')),
+                DataColumn(label: Text('Balance Payment')),
                 DataColumn(label: Text('Images'))
               ],
               rows: userDetails
                   .asMap()
                   .entries
                   .map((data) => DataRow(
-                cells: [
-                  DataCell(Text('${data.key + 1}')),
-                  DataCell(Text(data.value.companyName)),
-                  DataCell(Text(data.value.type)),
-                  DataCell(Text(data.value.date)),
-                  DataCell(Text(data.value.gstNo)),
-                  DataCell(Text(data.value.contactPerson)),
-                  DataCell(Text(data.value.contactNumber)),
-                  DataCell(Text(data.value.bdmName)),
-                  DataCell(Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(_calculateBalanceAmount(
-                          data.value.totalAmount,
-                          data.value.receivedAmount)),
-                      IconButton(
-                        icon: Icon(Icons.edit),
-                        onPressed: () => _editReceivedAmount(data.value),
-                      ),
-                    ],
-                  )),
-                  DataCell(data.value.imageList.isNotEmpty
-                      ? GestureDetector(
-                    onTap: () => Get.to(() => FullImageViewer(
-                        imageList: data.value.imageList)),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      child: Builder(
-                        builder: (context) {
-                          String firstImageBase64 = data.value.imageList.first;
-                          Uint8List? imageBytes = decodeBase64(firstImageBase64);
-                          if (imageBytes != null) {
-                            return Image.memory(
-                              imageBytes,
-                              fit: BoxFit.cover,
-                            );
-                          } else {
-                            return Text('Invalid Image');
-                          }
-                        },
-                      ),
-                    ),
-                  )
-                      : Text('No Image')),
-                ],
-              ))
+                        cells: [
+                          DataCell(Text('${data.key + 1}')),
+                          DataCell(Text(data.value.companyName)),
+                          DataCell(Text(data.value.type)),
+                          DataCell(Text(data.value.date)),
+                          DataCell(Text(data.value.gstNo)),
+                          DataCell(Text(data.value.contactPerson)),
+                          DataCell(Text(data.value.contactNumber)),
+                          DataCell(Text(data.value.bdmName)),
+
+                          /// Balance Amount
+                          DataCell(Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(_calculateBalanceAmount(
+                                  data.value.totalAmount,
+                                  data.value.receivedAmount,
+                                  balancePaymentAmount:
+                                      data.value.balancePaymentAmount)),
+                              IconButton(
+                                icon: Icon(Icons.edit),
+                                onPressed: () {
+                                  _showEditDialog(context, data.value);
+                                },
+                              ),
+                            ],
+                          )),
+
+                          /// Balance Payment
+                          DataCell(Text((data.value.balancePaymentAmount ==null ||
+                                  data.value.balancePaymentAmount == '0')
+                              ? '0'
+                              : '${data.value.balancePaymentAmount} on ${data.value.balancePaymentDate ?? ''}')),
+
+                          /// Invoice Images
+                          DataCell(data.value.imageList.isNotEmpty
+                              ? GestureDetector(
+                                  onTap: () => Get.to(() => FullImageViewer(
+                                      imageList: data.value.imageList)),
+                                  child: Container(
+                                    width: 40,
+                                    height: 40,
+                                    child: Builder(
+                                      builder: (context) {
+                                        String firstImageBase64 =
+                                            data.value.imageList.first;
+                                        Uint8List? imageBytes =
+                                            decodeBase64(firstImageBase64);
+                                        if (imageBytes != null) {
+                                          return Image.memory(
+                                            imageBytes,
+                                            fit: BoxFit.cover,
+                                          );
+                                        } else {
+                                          return Text('Invalid Image');
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                )
+                              : Text('No Image')),
+                        ],
+                      ))
                   .toList(),
             ),
           ),
