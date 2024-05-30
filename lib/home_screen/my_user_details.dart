@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:practice/home_screen/full_image.dart';
 import 'package:practice/utils/constants/sizes.dart';
+import 'package:practice/utils/popups/loaders.dart';
 
+import '../new_user_or_update_user_screen/widgets/ImageEditingDialog.dart';
 import 'model/user_details_model.dart';
 
 class MyUserDetails extends StatefulWidget {
@@ -34,7 +36,7 @@ class _MyUserDetailsState extends State<MyUserDetails> {
       try {
         return base64Decode(base64String);
       } catch (e) {
-        print('Failed to decode base64 string: $e');
+        SLoaders.errorSnackBar(title: 'Failed to decode base64 string: $e');
       }
     }
     return null;
@@ -55,17 +57,16 @@ class _MyUserDetailsState extends State<MyUserDetails> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Total Amount: ${user.totalAmount}'),
-              SizedBox(height: SSizes.spaceBtwItems/2),
+              SizedBox(height: SSizes.spaceBtwItems / 2),
               Text(
                   'Balance Amount: ${_calculateBalanceAmount(user.totalAmount, user.receivedAmount, balancePaymentAmount: user.balancePaymentAmount)}'),
-              SizedBox(height: SSizes.spaceBtwItems/2),
+              SizedBox(height: SSizes.spaceBtwItems / 2),
               TextField(
                 controller: paymentController,
                 decoration: InputDecoration(labelText: 'Enter Amount'),
                 keyboardType: TextInputType.number,
               ),
-              SizedBox(height: SSizes.spaceBtwItems/2),
-
+              SizedBox(height: SSizes.spaceBtwItems / 2),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -188,38 +189,61 @@ class _MyUserDetailsState extends State<MyUserDetails> {
                           )),
 
                           /// Balance Payment
-                          DataCell(Text((data.value.balancePaymentAmount ==null ||
+                          DataCell(Text((data.value.balancePaymentAmount ==
+                                      null ||
                                   data.value.balancePaymentAmount == '0')
                               ? '0'
                               : '${data.value.balancePaymentAmount} on ${data.value.balancePaymentDate ?? ''}')),
 
                           /// Invoice Images
-                          DataCell(data.value.imageList.isNotEmpty
-                              ? GestureDetector(
-                                  onTap: () => Get.to(() => FullImageViewer(
-                                      imageList: data.value.imageList)),
-                                  child: Container(
-                                    width: 40,
-                                    height: 40,
-                                    child: Builder(
-                                      builder: (context) {
-                                        String firstImageBase64 =
-                                            data.value.imageList.first;
-                                        Uint8List? imageBytes =
-                                            decodeBase64(firstImageBase64);
-                                        if (imageBytes != null) {
-                                          return Image.memory(
-                                            imageBytes,
-                                            fit: BoxFit.cover,
-                                          );
-                                        } else {
-                                          return Text('Invalid Image');
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                )
-                              : Text('No Image')),
+                          DataCell(
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                data.value.imageList.isNotEmpty
+                                    ? GestureDetector(
+                                        onTap: () => Get.to(() =>
+                                            FullImageViewer(
+                                                imageList:
+                                                    data.value.imageList)),
+                                        child: Container(
+                                          width: 40,
+                                          height: 40,
+                                          child: Builder(
+                                            builder: (context) {
+                                              String firstImageBase64 =
+                                                  data.value.imageList.first;
+                                              Uint8List? imageBytes =
+                                                  decodeBase64(
+                                                      firstImageBase64);
+                                              if (imageBytes != null) {
+                                                return Image.memory(
+                                                  imageBytes,
+                                                  fit: BoxFit.cover,
+                                                );
+                                              } else {
+                                                return Text('Invalid Image');
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                      )
+                                    : Text('No Image'),
+                                IconButton(
+                                  icon: Icon(Icons.edit),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => EditImagesDialog(
+                                        initialImages: data.value.imageList,
+                                        documentId: data.value.srNo,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          )
                         ],
                       ))
                   .toList(),

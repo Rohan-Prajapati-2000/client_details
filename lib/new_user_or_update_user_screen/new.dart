@@ -1,7 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:dotted_border/dotted_border.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:practice/new_user_or_update_user_screen/widgets/renew_new.dart';
@@ -219,9 +217,9 @@ class _NewUserState extends State<NewUser> {
                         decoration: InputDecoration(
                             labelText: 'Total Amount'
                         ),
+                        readOnly: true, // Making the field read-only
                       ),
                     ),
-
                     Expanded(flex: 4, child: Container())
                   ],
                 ),

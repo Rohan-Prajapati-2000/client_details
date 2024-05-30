@@ -56,18 +56,18 @@ class PriceDetailsMenu extends StatelessWidget {
   }
 
   Widget buildSubscriptionRow(
-      BuildContext context,
-      RxBool isChecked,
-      String title,
-      TextEditingController totalAmountController,
-      TextEditingController receivedAmountController,
-      RxString validity,
-      ) {
+    BuildContext context,
+    RxBool isChecked,
+    String title,
+    TextEditingController totalAmountController,
+    TextEditingController receivedAmountController,
+    RxString validity,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Obx(
-              () => Checkbox(
+          () => Checkbox(
             value: isChecked.value,
             onChanged: (value) {
               isChecked.value = value!;
@@ -82,35 +82,35 @@ class PriceDetailsMenu extends StatelessWidget {
           ),
         ),
         Obx(
-              () => isChecked.value
+          () => isChecked.value
               ? Expanded(
-            child: ValidityDropDown(
-              selectedValue: validity.value,
-              onSelected: (val) {
-                validity.value = val;
-              },
-            ),
-          )
+                  child: ValidityDropDown(
+                    selectedValue: validity.value,
+                    onSelected: (val) {
+                      validity.value = val;
+                    },
+                  ),
+                )
               : SizedBox(),
         ),
         Obx(
-              () => isChecked.value
+          () => isChecked.value
               ? Expanded(
-            child: TextFormField(
-              controller: totalAmountController,
-              decoration: InputDecoration(hintText: 'Total Amount'),
-            ),
-          )
+                  child: TextFormField(
+                    controller: totalAmountController,
+                    decoration: InputDecoration(hintText: 'Total Amount'),
+                  ),
+                )
               : SizedBox(),
         ),
         Obx(
-              () => isChecked.value
+          () => isChecked.value
               ? Expanded(
-            child: TextFormField(
-              controller: receivedAmountController,
-              decoration: InputDecoration(hintText: 'Balance Amount'),
-            ),
-          )
+                  child: TextFormField(
+                    controller: receivedAmountController,
+                    decoration: InputDecoration(hintText: 'Balance Amount'),
+                  ),
+                )
               : SizedBox(),
         ),
       ],

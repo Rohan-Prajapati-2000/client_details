@@ -54,8 +54,50 @@ class SaveFromDataController extends GetxController {
 
   final subscriptions = <SubscriptionModel>[].obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+
+    // Add listeners to subscription amount controllers
+    totalAmountSEO.addListener(calculateTotalAmount);
+    totalAmountVirtualTour.addListener(calculateTotalAmount);
+    totalAmountGBPM.addListener(calculateTotalAmount);
+    totalAmountZKSEO.addListener(calculateTotalAmount);
+
+    // Add listeners to the checkboxes
+    ever(isCheckedSEO, (_) => calculateTotalAmount());
+    ever(isCheckedVirtualTour, (_) => calculateTotalAmount());
+    ever(isCheckedGBPM, (_) => calculateTotalAmount());
+    ever(isCheckedZKSEO, (_) => calculateTotalAmount());
+  }
+
   void addSubscription(SubscriptionModel subscription) {
     subscriptions.add(subscription);
+    calculateTotalAmount();
+  }
+
+  void removeSubscription(SubscriptionModel subscription) {
+    subscriptions.remove(subscription);
+    calculateTotalAmount();
+  }
+
+  void calculateTotalAmount() {
+    double total = 0;
+
+    if (isCheckedSEO.value) {
+      total += double.tryParse(totalAmountSEO.text) ?? 0;
+    }
+    if (isCheckedVirtualTour.value) {
+      total += double.tryParse(totalAmountVirtualTour.text) ?? 0;
+    }
+    if (isCheckedGBPM.value) {
+      total += double.tryParse(totalAmountGBPM.text) ?? 0;
+    }
+    if (isCheckedZKSEO.value) {
+      total += double.tryParse(totalAmountZKSEO.text) ?? 0;
+    }
+
+    totalAmount.text = total.toStringAsFixed(2);
   }
 
   Future<List<String>?> uploadImageToFirestore() async {
@@ -136,6 +178,14 @@ class SaveFromDataController extends GetxController {
           productBalanceAmount: receivedAmountSEO.text,
         ),
       );
+    } else {
+      removeSubscription(SubscriptionModel(
+        isSelected: true,
+        productTitle: 'Local Keyword SEO',
+        validity: validitySEO.value,
+        productTotalAmount: totalAmountSEO.text,
+        productBalanceAmount: receivedAmountSEO.text,
+      ));
     }
 
     if (isCheckedVirtualTour.value) {
@@ -148,6 +198,14 @@ class SaveFromDataController extends GetxController {
           productBalanceAmount: receivedAmountVirtualTour.text,
         ),
       );
+    } else {
+      removeSubscription(SubscriptionModel(
+        isSelected: true,
+        productTitle: 'Virtual Tour',
+        validity: validityVirtualTour.value,
+        productTotalAmount: totalAmountVirtualTour.text,
+        productBalanceAmount: receivedAmountVirtualTour.text,
+      ));
     }
 
     if (isCheckedGBPM.value) {
@@ -160,6 +218,14 @@ class SaveFromDataController extends GetxController {
           productBalanceAmount: receivedAmountGBPM.text,
         ),
       );
+    } else {
+      removeSubscription(SubscriptionModel(
+        isSelected: true,
+        productTitle: 'Google Business Profile Management',
+        validity: validityGBPM.value,
+        productTotalAmount: totalAmountGBPM.text,
+        productBalanceAmount: receivedAmountGBPM.text,
+      ));
     }
 
     if (isCheckedZKSEO.value) {
@@ -172,7 +238,16 @@ class SaveFromDataController extends GetxController {
           productBalanceAmount: receivedAmountZKSEO.text,
         ),
       );
+    } else {
+      removeSubscription(SubscriptionModel(
+        isSelected: true,
+        productTitle: 'Zonal Keyword SEO',
+        validity: validityZKSEO.value,
+        productTotalAmount: totalAmountZKSEO.text,
+        productBalanceAmount: receivedAmountZKSEO.text,
+      ));
     }
+
     saveFormDataToFirestore();
   }
 
@@ -205,7 +280,5 @@ class SaveFromDataController extends GetxController {
     totalAmountZKSEO.clear();
     receivedAmountZKSEO.clear();
     validityZKSEO.value = '';
-    subscriptions.clear();
-    selectedImageBytesList.clear();
   }
 }
