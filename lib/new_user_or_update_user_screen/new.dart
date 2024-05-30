@@ -19,6 +19,7 @@ class NewUser extends StatefulWidget {
 }
 
 class _NewUserState extends State<NewUser> {
+  bool _isLoading = false;
 
   Future<void> selectDate() async {
     DateTime? pickedDate = await showDatePicker(
@@ -32,14 +33,15 @@ class _NewUserState extends State<NewUser> {
     if (pickedDate != null) {
       // Update the text of the date controller with the picked date
       setState(() {
-        Get.find<SaveFromDataController>().date.text = pickedDate.toString().split(' ')[0];
+        Get.find<SaveFromDataController>().date.text =
+            pickedDate.toString().split(' ')[0];
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final controller =Get.put(SaveFromDataController());
+    final controller = Get.put(SaveFromDataController());
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -54,26 +56,28 @@ class _NewUserState extends State<NewUser> {
                   width: 150,
                   child: TextButton(
                     style: TextButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        side: BorderSide(
-                          color: Colors.orange,
-                        )
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      side: const BorderSide(
+                        color: Colors.orange,
+                      ),
                     ),
                     onPressed: () => Get.back(),
-                    child: Text('Back', style: Theme.of(context).textTheme.bodyMedium!.apply(color: Colors.orange)),
+                    child: Text('Back',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium!
+                            .apply(color: Colors.orange)),
                   ),
                 ),
-
-                SizedBox(height: SSizes.spaceBtwItems),
-
+                const SizedBox(height: SSizes.spaceBtwItems),
                 Row(
                   children: [
                     Expanded(
                       child: TextFormField(
                         controller: controller.date,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Date',
                           prefixIcon: Icon(Icons.calendar_today),
                         ),
@@ -81,254 +85,208 @@ class _NewUserState extends State<NewUser> {
                         onTap: selectDate,
                       ),
                     ),
-
-                    SizedBox(width: SSizes.spaceBtwItems/2),
-
+                    const SizedBox(width: SSizes.spaceBtwItems / 2),
                     Expanded(
                       child: RenewNew(),
                     ),
-
-                    Expanded(flex: 6, child: Container())
+                    Expanded(flex: 6, child: Container()),
                   ],
                 ),
-
-                SizedBox(height: SSizes.spaceBtwItems),
-
+                const SizedBox(height: SSizes.spaceBtwItems),
                 Row(
                   children: [
                     Expanded(
                       child: TextFormField(
                         controller: controller.companyName,
-                        decoration: InputDecoration(
-                            labelText: 'Company Name'
-                        ),
+                        decoration:
+                            const InputDecoration(labelText: 'Company Name'),
                       ),
                     ),
-
-                    Expanded(flex: 3, child: Container())
+                    Expanded(flex: 3, child: Container()),
                   ],
                 ),
-
-                SizedBox(height: SSizes.spaceBtwItems),
-
+                const SizedBox(height: SSizes.spaceBtwItems),
                 Row(
                   children: [
                     Expanded(
                       child: TextFormField(
                         controller: controller.gstNumber,
-                        decoration: InputDecoration(
-                            labelText: 'GST Number'
-                        ),
+                        decoration:
+                            const InputDecoration(labelText: 'GST Number'),
                       ),
                     ),
-
-                    Expanded(flex: 4, child: Container())
+                    Expanded(flex: 4, child: Container()),
                   ],
                 ),
-
-                SizedBox(height: SSizes.spaceBtwItems),
-
+                const SizedBox(height: SSizes.spaceBtwItems),
                 Row(
                   children: [
                     Expanded(
                       child: TextFormField(
                         controller: controller.address,
-                        decoration: InputDecoration(
-                            labelText: 'Address'
-                        ),
+                        decoration: const InputDecoration(labelText: 'Address'),
                       ),
                     ),
-
-                    Expanded(flex: 2, child: Container())
+                    Expanded(flex: 2, child: Container()),
                   ],
                 ),
-
-                SizedBox(height: SSizes.spaceBtwItems),
-
+                const SizedBox(height: SSizes.spaceBtwItems),
                 Row(
                   children: [
                     Expanded(
                       child: TextFormField(
                         controller: controller.contactPerson,
-                        decoration: InputDecoration(
-                            labelText: 'Contact Person'
-                        ),
+                        decoration:
+                            const InputDecoration(labelText: 'Contact Person'),
                       ),
                     ),
-
-                    Expanded(flex: 4, child: Container())
+                    Expanded(flex: 4, child: Container()),
                   ],
                 ),
-
-                SizedBox(height: SSizes.spaceBtwItems),
-
+                const SizedBox(height: SSizes.spaceBtwItems),
                 Row(
                   children: [
                     Expanded(
                       child: TextFormField(
                         controller: controller.contactNumber,
-                        decoration: InputDecoration(
-                            labelText: 'Contact Number'
-                        ),
+                        decoration:
+                            const InputDecoration(labelText: 'Contact Number'),
                       ),
                     ),
-
-                    Expanded(flex: 4, child: Container())
+                    Expanded(flex: 4, child: Container()),
                   ],
                 ),
-
-                SizedBox(height: SSizes.spaceBtwItems),
-
+                const SizedBox(height: SSizes.spaceBtwItems),
                 Row(
                   children: [
                     Expanded(
                       child: TextFormField(
                         controller: controller.contactEmail,
-                        decoration: InputDecoration(
-                            labelText: 'Contact Email'
-                        ),
+                        decoration:
+                            const InputDecoration(labelText: 'Contact Email'),
                       ),
                     ),
-
-                    Expanded(flex: 4, child: Container())
+                    Expanded(flex: 4, child: Container()),
                   ],
                 ),
-
-                SizedBox(height: SSizes.spaceBtwItems),
-
+                const SizedBox(height: SSizes.spaceBtwItems),
                 Row(
                   children: [
                     Expanded(child: SelfTally()),
-                    Expanded(flex: 7, child: Container())
+                    Expanded(flex: 7, child: Container()),
                   ],
                 ),
-
-                SizedBox(height: SSizes.spaceBtwItems),
-
+                const SizedBox(height: SSizes.spaceBtwItems),
                 PriceDetailsMenu(),
-
-                SizedBox(height: SSizes.spaceBtwItems),
-
+                const SizedBox(height: SSizes.spaceBtwItems),
                 Row(
                   children: [
                     Expanded(
                       child: TextFormField(
                         controller: controller.totalAmount,
-                        decoration: InputDecoration(
-                            labelText: 'Total Amount'
-                        ),
+                        decoration:
+                            const InputDecoration(labelText: 'Total Amount'),
                         readOnly: true, // Making the field read-only
                       ),
                     ),
-                    Expanded(flex: 4, child: Container())
+                    Expanded(flex: 4, child: Container()),
                   ],
                 ),
-
-                SizedBox(height: SSizes.spaceBtwItems),
-
+                const SizedBox(height: SSizes.spaceBtwItems),
                 Row(
                   children: [
                     Expanded(
                       child: TextFormField(
                         controller: controller.receivedAmount,
-                        decoration: InputDecoration(
-                            labelText: 'Received Amount'
-                        ),
+                        decoration:
+                            const InputDecoration(labelText: 'Received Amount'),
                       ),
                     ),
-
-                    Expanded(flex: 4, child: Container())
+                    Expanded(flex: 4, child: Container()),
                   ],
                 ),
-
-                SizedBox(height: SSizes.spaceBtwItems),
-
+                const SizedBox(height: SSizes.spaceBtwItems),
                 Row(
                   children: [
-                    Expanded(child: PaymentStatus()),
-
-                    SizedBox(width: SSizes.spaceBtwItems/2),
-
+                    const Expanded(child: PaymentStatus()),
+                    const SizedBox(width: SSizes.spaceBtwItems / 2),
                     Expanded(
                       child: TextFormField(
                         controller: controller.bdmName,
-                        decoration: InputDecoration(
-                            labelText: 'BDM Name'
-                        ),
+                        decoration:
+                            const InputDecoration(labelText: 'BDM Name'),
                       ),
                     ),
-
-                    Expanded(flex: 6, child: Container())
-
+                    Expanded(flex: 6, child: Container()),
                   ],
                 ),
-
-                SizedBox(height: SSizes.spaceBtwItems),
-
+                const SizedBox(height: SSizes.spaceBtwItems),
                 Row(
                   children: [
                     Expanded(
                       child: TextFormField(
                         controller: controller.remark,
-                        decoration: InputDecoration(
-                            labelText: 'Remark'
-                        ),
+                        decoration: const InputDecoration(labelText: 'Remark'),
                       ),
                     ),
-
-                    Expanded(child: Container())
+                    Expanded(child: Container()),
                   ],
                 ),
-                SizedBox(height: SSizes.spaceBtwItems),
-
-                ImagePickerWidget(onImageSelected: (List<Uint8List?> imageBytesList) {
-                  Get.find<SaveFromDataController>().selectedImageBytesList = imageBytesList;
-                },),
-
-                SizedBox(height: SSizes.spaceBtwItems),
-
+                const SizedBox(height: SSizes.spaceBtwItems),
+                ImagePickerWidget(
+                  onImageSelected: (List<Uint8List?> imageBytesList) {
+                    Get.find<SaveFromDataController>().selectedImageBytesList =
+                        imageBytesList;
+                  },
+                ),
+                const SizedBox(height: SSizes.spaceBtwItems),
                 SizedBox(
                   height: 40,
                   width: 150,
                   child: TextButton(
-                      style: TextButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              side: BorderSide(
-                                  width: 1,
-                                  color: Colors.red
-                              )
-                          )
+                    style: TextButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: const BorderSide(
+                          width: 1,
+                          color: Colors.red,
+                        ),
                       ),
-                      onPressed: (){
-                        controller.clearFormFields();
-                      },
-                      child: Text('Clear Form', style: Theme.of(context).textTheme.labelLarge!.apply(color: Colors.red))
+                    ),
+                    onPressed: () {
+                      controller.clearFormFields();
+                    },
+                    child: Text('Clear Form',
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelLarge!
+                            .apply(color: Colors.red)),
                   ),
                 ),
-
-
-                SizedBox(height: SSizes.spaceBtwItems),
-
+                const SizedBox(height: SSizes.spaceBtwItems),
                 SizedBox(
-                    height: 40,
-                    width: 150,
-                    child: TextButton(
-                        style: TextButton.styleFrom(
+                  height: 40,
+                  width: 150,
+                  child: TextButton(
+                          style: TextButton.styleFrom(
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                side: BorderSide(
-                                    width: 1,
-                                    color: Colors.green
-                                )
-                            )
+                              borderRadius: BorderRadius.circular(10),
+                              side: const BorderSide(
+                                width: 1,
+                                color: Colors.green,
+                              ),
+                            ),
+                          ),
+                          onPressed: () async {
+                            await controller.saveSubscriptions();
+                          },
+                          child: Text('Submit',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelLarge!
+                                  .apply(color: Colors.green)),
                         ),
-                        onPressed: (){
-                          controller.saveSubscriptions();
-                        },
-                        child: Text('Submit', style: Theme.of(context).textTheme.labelLarge!.apply(color: Colors.green)))
                 ),
-
               ],
             ),
           ),

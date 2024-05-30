@@ -167,7 +167,8 @@ class SaveFromDataController extends GetxController {
     }
   }
 
-  void saveSubscriptions() {
+
+  Future<void> saveSubscriptions() async{
     if (isCheckedSEO.value) {
       addSubscription(
         SubscriptionModel(
