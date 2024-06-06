@@ -12,13 +12,17 @@ import '../new_user_or_update_user_screen/widgets/ImageEditingDialog.dart';
 import 'model/user_details_model.dart';
 
 class MyUserDetails extends StatefulWidget {
-  const MyUserDetails({super.key});
+  final String companyName;
+
+  const MyUserDetails({required this.companyName, super.key});
 
   @override
   State<MyUserDetails> createState() => _MyUserDetailsState();
 }
 
 class _MyUserDetailsState extends State<MyUserDetails> {
+  List<MyUserDetailsModel> _userDetails = [];
+  bool _isLoading = true;
 
   String _calculateBalanceAmount(String totalAmount, String receivedAmount, [String? balancePaymentAmount]) {
     try {
@@ -38,9 +42,6 @@ class _MyUserDetailsState extends State<MyUserDetails> {
     }
   }
 
-
-
-
   Uint8List? decodeBase64(String? base64String) {
     if (base64String != null && base64String.isNotEmpty) {
       try {
@@ -52,8 +53,7 @@ class _MyUserDetailsState extends State<MyUserDetails> {
     return null;
   }
 
-  Future<void> _showEditDialog(
-      BuildContext context, MyUserDetailsModel user) async {
+  Future<void> _showEditDialog(BuildContext context, MyUserDetailsModel user) async {
     TextEditingController paymentController = TextEditingController();
     DateTime selectedDate = DateTime.now();
 
@@ -68,8 +68,7 @@ class _MyUserDetailsState extends State<MyUserDetails> {
             children: [
               Text('Total Amount: ${user.totalAmount}'),
               const SizedBox(height: SSizes.spaceBtwItems / 2),
-              Text(
-                  'Balance Amount: ${_calculateBalanceAmount(user.totalAmount, user.receivedAmount, user.balancePaymentAmount)}'),
+              Text('Balance Amount: ${_calculateBalanceAmount(user.totalAmount, user.receivedAmount, user.balancePaymentAmount)}'),
               const SizedBox(height: SSizes.spaceBtwItems / 2),
               TextField(
                 controller: paymentController,
@@ -107,12 +106,8 @@ class _MyUserDetailsState extends State<MyUserDetails> {
               onPressed: () async {
                 try {
                   int paymentAmount = int.parse(paymentController.text);
-                  String formattedDate =
-                      "${selectedDate.toLocal()}".split(' ')[0];
-                  await FirebaseFirestore.instance
-                      .collection('client_details')
-                      .doc(user.srNo)
-                      .update({
+                  String formattedDate = "${selectedDate.toLocal()}".split(' ')[0];
+                  await FirebaseFirestore.instance.collection('client_details').doc(user.srNo).update({
                     'Balance Payment Amount': paymentAmount.toString(),
                     'Balance Payment Date': formattedDate,
                   });
@@ -129,126 +124,152 @@ class _MyUserDetailsState extends State<MyUserDetails> {
     );
   }
 
+  void _fetchUserDetails() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    Query query = FirebaseFirestore.instance.collection('client_details').orderBy('Date');
+
+    if (widget.companyName.isNotEmpty) {
+      query = FirebaseFirestore.instance
+          .collection('client_details')
+          .where('Company Name', isEqualTo: widget.companyName)
+          .orderBy('Date');
+    }
+
+    query.snapshots().listen((QuerySnapshot snapshot) {
+      List<MyUserDetailsModel> userDetails = snapshot.docs
+          .map((doc) => MyUserDetailsModel.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
+
+      setState(() {
+        _userDetails = userDetails;
+        _isLoading = false;
+      });
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant MyUserDetails oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.companyName != widget.companyName) {
+      _fetchUserDetails();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserDetails();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('client_details').orderBy('Date').snapshots(),
-      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+    return _isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: SingleChildScrollView(
+        child: DataTable(
+          columns: const [
+            DataColumn(label: Text('Sr No')),
+            DataColumn(label: Text('Company Name')),
+            DataColumn(label: Text('Type')),
+            DataColumn(label: Text('Date')),
+            DataColumn(label: Text('GST No')),
+            DataColumn(label: Text('Contact Person')),
+            DataColumn(label: Text('Contact Number')),
+            DataColumn(label: Text('BDM Name')),
+            DataColumn(label: Text('Balance Amount')),
+            DataColumn(label: Text('Balance Payment')),
+            DataColumn(label: Text('Images')),
+          ],
+          rows: _userDetails.asMap().entries.map((data) {
+            final user = data.value;
 
-        List<MyUserDetailsModel> userDetails = [];
-        for (var details in snapshot.data!.docs) {
-          userDetails.add(MyUserDetailsModel.fromJson(details.data() as Map<String, dynamic>));
-        }
+            return DataRow(
+              cells: [
+                DataCell(Text('${data.key + 1}')),
+                DataCell(Text(user.companyName)),
+                DataCell(Text(user.type)),
+                DataCell(Text(user.date)),
+                DataCell(Text(user.gstNo)),
+                DataCell(Text(user.contactPerson)),
+                DataCell(Text(user.contactNumber)),
+                DataCell(Text(user.bdmName)),
 
-        return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: SingleChildScrollView(
-            child: DataTable(
-              columns: const [
-                DataColumn(label: Text('Sr No')),
-                DataColumn(label: Text('Company Name')),
-                DataColumn(label: Text('Type')),
-                DataColumn(label: Text('Date')),
-                DataColumn(label: Text('GST No')),
-                DataColumn(label: Text('Contact Person')),
-                DataColumn(label: Text('Contact Number')),
-                DataColumn(label: Text('BDM Name')),
-                DataColumn(label: Text('Balance Amount')),
-                DataColumn(label: Text('Balance Payment')),
-                DataColumn(label: Text('Images'))
-              ],
-              rows: userDetails.asMap().entries.map((data) {
-                final user = data.value;
+                /// Balance Amount
+                DataCell(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(_calculateBalanceAmount(user.totalAmount, user.receivedAmount, user.balancePaymentAmount)),
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () {
+                          _showEditDialog(context, user);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
 
-                return DataRow(
-                  cells: [
-                    DataCell(Text('${data.key + 1}')),
-                    DataCell(Text(user.companyName)),
-                    DataCell(Text(user.type)),
-                    DataCell(Text(user.date)),
-                    DataCell(Text(user.gstNo)),
-                    DataCell(Text(user.contactPerson)),
-                    DataCell(Text(user.contactNumber)),
-                    DataCell(Text(user.bdmName)),
+                /// Balance Payment
+                DataCell(Text(
+                  (user.balancePaymentAmount == null || user.balancePaymentAmount == '0')
+                      ? '0'
+                      : '${user.balancePaymentAmount} on ${user.balancePaymentDate ?? ''}',
+                )),
 
-                    /// Balance Amount
-                    DataCell(
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(_calculateBalanceAmount(user.totalAmount, user.receivedAmount, user.balancePaymentAmount)),
-                          IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {
-                              _showEditDialog(context, user);
+                /// Invoice Images
+                DataCell(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      user.imageList.isNotEmpty
+                          ? GestureDetector(
+                        onTap: () => Get.to(() => FullImageViewer(imageList: user.imageList)),
+                        child: SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: Builder(
+                            builder: (context) {
+                              String firstImageBase64 = user.imageList.first;
+                              Uint8List? imageBytes = decodeBase64(firstImageBase64);
+                              if (imageBytes != null) {
+                                return Image.memory(
+                                  imageBytes,
+                                  fit: BoxFit.cover,
+                                );
+                              } else {
+                                return const Text('Invalid Image');
+                              }
                             },
                           ),
-                        ],
-                      ),
-                    ),
-
-                    /// Balance Payment
-                    DataCell(Text(
-                      (user.balancePaymentAmount == null || user.balancePaymentAmount == '0')
-                          ? '0'
-                          : '${user.balancePaymentAmount} on ${user.balancePaymentDate ?? ''}',
-                    )),
-
-                    /// Invoice Images
-                    DataCell(
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          user.imageList.isNotEmpty
-                              ? GestureDetector(
-                            onTap: () => Get.to(() => FullImageViewer(imageList: user.imageList)),
-                            child: SizedBox(
-                              width: 40,
-                              height: 40,
-                              child: Builder(
-                                builder: (context) {
-                                  String firstImageBase64 = user.imageList.first;
-                                  Uint8List? imageBytes = decodeBase64(firstImageBase64);
-                                  if (imageBytes != null) {
-                                    return Image.memory(
-                                      imageBytes,
-                                      fit: BoxFit.cover,
-                                    );
-                                  } else {
-                                    return const Text('Invalid Image');
-                                  }
-                                },
-                              ),
+                        ),
+                      )
+                          : const Text('No Image'),
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => EditImagesDialog(
+                              initialImages: user.imageList,
+                              documentId: user.srNo,
                             ),
-                          )
-                              : const Text('No Image'),
-                          IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => EditImagesDialog(
-                                  initialImages: user.imageList,
-                                  documentId: user.srNo,
-                                ),
-                              );
-                            },
-                          ),
-                        ],
+                          );
+                        },
                       ),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
-          ),
-        );
-      },
+                    ],
+                  ),
+                ),
+              ],
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 }
