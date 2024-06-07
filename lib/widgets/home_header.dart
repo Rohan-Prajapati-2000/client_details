@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:practice/new_user_or_update_user_screen/new.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,11 +23,12 @@ class MyHomeHeader extends StatefulWidget {
 class _MyHomeHeaderState extends State<MyHomeHeader> {
   final TextEditingController _companyNameController = TextEditingController();
   final ValueNotifier<String> _selectedCompanyNameNotifier = ValueNotifier<String>('');
-
+  final ValueNotifier<String> _selectedYearNotifier = ValueNotifier<String>('');
   @override
   void dispose() {
     _companyNameController.dispose();
     _selectedCompanyNameNotifier.dispose();
+    _selectedYearNotifier.dispose();
     super.dispose();
   }
 
@@ -135,11 +137,16 @@ class _MyHomeHeaderState extends State<MyHomeHeader> {
                               },
                               onSelected: (String selection) {
                                 _companyNameController.text = selection;
+                                _selectedYearNotifier.value = selection;
                               },
                             ),
                           ),
                           const SizedBox(width: SSizes.spaceBtwItems / 2),
-                          Expanded(child: YearDropdownButton()),
+                          Expanded(child: YearDropdownButton(
+                            onYearChange: (years) {
+                              _selectedYearNotifier.value = years;
+                            },
+                          )),
                           const SizedBox(width: SSizes.spaceBtwItems / 2),
                           Expanded(child: MonthDropdownButton()),
                           const SizedBox(width: SSizes.spaceBtwItems / 2),
@@ -169,6 +176,7 @@ class _MyHomeHeaderState extends State<MyHomeHeader> {
                               onPressed: () {
                                 _selectedCompanyNameNotifier.value = '';
                                 _companyNameController.clear();
+                                _selectedYearNotifier.value = 'Select Year';
                               },
                               title: 'Reset',
                               borderColor: SColors.error,
@@ -201,7 +209,12 @@ class _MyHomeHeaderState extends State<MyHomeHeader> {
                       ValueListenableBuilder<String>(
                         valueListenable: _selectedCompanyNameNotifier,
                         builder: (context, selectedCompanyName, child) {
-                          return MyUserDetails(companyName: selectedCompanyName);
+                          return ValueListenableBuilder<String>(
+                              valueListenable : _selectedYearNotifier,
+                              builder: (context, year, child) {
+                                return MyUserDetails(companyName: selectedCompanyName, year: year);
+                              },
+                          );
                         },
                       ),
                     ],
