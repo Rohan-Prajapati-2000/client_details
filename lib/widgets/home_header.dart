@@ -1,7 +1,7 @@
+// Import statements
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:practice/new_user_or_update_user_screen/new.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,6 +13,7 @@ import 'expired_pending_dropdown_button.dart';
 import 'month_dropdown_button.dart';
 import 'year_dropdown_button.dart';
 
+// MyHomeHeader class
 class MyHomeHeader extends StatefulWidget {
   const MyHomeHeader({super.key});
 
@@ -22,13 +23,19 @@ class MyHomeHeader extends StatefulWidget {
 
 class _MyHomeHeaderState extends State<MyHomeHeader> {
   final TextEditingController _companyNameController = TextEditingController();
-  final ValueNotifier<String> _selectedCompanyNameNotifier = ValueNotifier<String>('');
+  final ValueNotifier<String> _selectedCompanyNameNotifier =
+      ValueNotifier<String>('');
   final ValueNotifier<String> _selectedYearNotifier = ValueNotifier<String>('');
+  final ValueNotifier<String> _selectMonthNotifire = ValueNotifier<String>('');
+  final GlobalKey<MyUserDetailsState> _userDetailsKey =
+      GlobalKey<MyUserDetailsState>();
+
   @override
   void dispose() {
     _companyNameController.dispose();
     _selectedCompanyNameNotifier.dispose();
     _selectedYearNotifier.dispose();
+    _selectMonthNotifire.dispose();
     super.dispose();
   }
 
@@ -66,9 +73,10 @@ class _MyHomeHeaderState extends State<MyHomeHeader> {
                       side: const BorderSide(color: SColors.secondaryColor),
                     ),
                   ),
-                  onPressed: () => Get.to(() => NewUser()),
+                  onPressed: () => Get.to(() => const NewUser()),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: SSizes.defaultSpace / 2),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: SSizes.defaultSpace / 2),
                     child: Text(
                       'Add New',
                       style: Theme.of(context).textTheme.titleMedium,
@@ -97,7 +105,9 @@ class _MyHomeHeaderState extends State<MyHomeHeader> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: SSizes.spaceBtwItems * 2, vertical: SSizes.spaceBtwItems / 1.8),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: SSizes.spaceBtwItems * 2,
+                      vertical: SSizes.spaceBtwItems / 1.8),
                   child: Text(
                     'Details',
                     style: TextStyle(color: Colors.green),
@@ -114,25 +124,38 @@ class _MyHomeHeaderState extends State<MyHomeHeader> {
                         children: [
                           Expanded(
                             child: Autocomplete<String>(
-                              optionsBuilder: (TextEditingValue textEditingValue) async {
+                              optionsBuilder:
+                                  (TextEditingValue textEditingValue) async {
                                 if (textEditingValue.text.isEmpty) {
                                   return const Iterable<String>.empty();
                                 }
                                 // Fetch matching company names from Firestore
-                                QuerySnapshot snapshot = await FirebaseFirestore.instance
+                                QuerySnapshot snapshot = await FirebaseFirestore
+                                    .instance
                                     .collection('client_details')
-                                    .where('Company Name', isGreaterThanOrEqualTo: textEditingValue.text)
-                                    .where('Company Name', isLessThanOrEqualTo: '${textEditingValue.text}\uf8ff')
+                                    .where('Company Name',
+                                        isGreaterThanOrEqualTo:
+                                            textEditingValue.text)
+                                    .where('Company Name',
+                                        isLessThanOrEqualTo:
+                                            '${textEditingValue.text}\uf8ff')
                                     .get();
-                                List<String> companyNames = snapshot.docs.map((doc) => doc['Company Name'] as String).toList();
+                                List<String> companyNames = snapshot.docs
+                                    .map((doc) => doc['Company Name'] as String)
+                                    .toList();
                                 return companyNames;
                               },
-                              fieldViewBuilder: (BuildContext context, TextEditingController textEditingController, FocusNode focusNode, VoidCallback onFieldSubmitted) {
-                                _companyNameController.text = textEditingController.text;
+                              fieldViewBuilder: (BuildContext context,
+                                  TextEditingController textEditingController,
+                                  FocusNode focusNode,
+                                  VoidCallback onFieldSubmitted) {
+                                _companyNameController.text =
+                                    textEditingController.text;
                                 return TextField(
                                   controller: textEditingController,
                                   focusNode: focusNode,
-                                  decoration: const InputDecoration(labelText: 'Company Name'),
+                                  decoration: const InputDecoration(
+                                      labelText: 'Company Name'),
                                 );
                               },
                               onSelected: (String selection) {
@@ -148,7 +171,11 @@ class _MyHomeHeaderState extends State<MyHomeHeader> {
                             },
                           )),
                           const SizedBox(width: SSizes.spaceBtwItems / 2),
-                          Expanded(child: MonthDropdownButton()),
+                          Expanded(child: MonthDropdownButton(
+                            onMonthChange: (month) {
+                              _selectMonthNotifire.value = month;
+                            },
+                          )),
                           const SizedBox(width: SSizes.spaceBtwItems / 2),
                           Expanded(child: ExpiredAndPendingDropdownButton()),
                           const SizedBox(width: SSizes.spaceBtwItems / 2),
@@ -163,7 +190,10 @@ class _MyHomeHeaderState extends State<MyHomeHeader> {
                             child: ButtonWithIconAndText(
                               icon: CupertinoIcons.search,
                               onPressed: () {
-                                _selectedCompanyNameNotifier.value = _companyNameController.text;
+                                _selectedCompanyNameNotifier.value =
+                                    _companyNameController.text;
+                                _userDetailsKey.currentState
+                                    ?.fetchUserDetails();
                               },
                               title: 'Search',
                               borderColor: SColors.secondaryColor,
@@ -174,9 +204,13 @@ class _MyHomeHeaderState extends State<MyHomeHeader> {
                             child: ButtonWithIconAndText(
                               icon: CupertinoIcons.xmark,
                               onPressed: () {
-                                _selectedCompanyNameNotifier.value = '';
-                                _companyNameController.clear();
-                                _selectedYearNotifier.value = 'Select Year';
+                                setState(() {
+                                  _selectedCompanyNameNotifier.value = '';
+                                  _companyNameController.clear();
+                                  _selectedYearNotifier.value = 'Select Year';
+                                  _userDetailsKey.currentState
+                                      ?.fetchUserDetails();
+                                });
                               },
                               title: 'Reset',
                               borderColor: SColors.error,
@@ -210,10 +244,18 @@ class _MyHomeHeaderState extends State<MyHomeHeader> {
                         valueListenable: _selectedCompanyNameNotifier,
                         builder: (context, selectedCompanyName, child) {
                           return ValueListenableBuilder<String>(
-                              valueListenable : _selectedYearNotifier,
-                              builder: (context, year, child) {
-                                return MyUserDetails(companyName: selectedCompanyName, year: year);
-                              },
+                            valueListenable: _selectedYearNotifier,
+                            builder: (context, year, child) {
+                              return ValueListenableBuilder<String>(
+                                  valueListenable: _selectMonthNotifire,
+                                  builder: (context, month, child) {
+                                    return MyUserDetails(
+                                        key: _userDetailsKey,
+                                        companyName: selectedCompanyName,
+                                        year: year,
+                                        month: month);
+                                  });
+                            },
                           );
                         },
                       ),

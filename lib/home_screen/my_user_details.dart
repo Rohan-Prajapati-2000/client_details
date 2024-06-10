@@ -14,17 +14,22 @@ import 'model/user_details_model.dart';
 class MyUserDetails extends StatefulWidget {
   final String companyName;
   final String year;
+  final String month;
 
   const MyUserDetails(
-      {required this.companyName, super.key, required this.year});
+      {required this.companyName,
+      super.key,
+      required this.year,
+      required this.month});
 
   @override
-  State<MyUserDetails> createState() => _MyUserDetailsState();
+  MyUserDetailsState createState() => MyUserDetailsState();
 }
 
-class _MyUserDetailsState extends State<MyUserDetails> {
+class MyUserDetailsState extends State<MyUserDetails> {
   List<MyUserDetailsModel> _userDetails = [];
   bool _isLoading = true;
+  bool _noData = false;
 
   String _calculateBalanceAmount(String totalAmount, String receivedAmount,
       [String? balancePaymentAmount]) {
@@ -134,20 +139,38 @@ class _MyUserDetailsState extends State<MyUserDetails> {
     );
   }
 
-  void _fetchUserDetails() async {
+  void fetchUserDetails() async {
     setState(() {
       _isLoading = true;
+      _noData = false;
     });
 
     Query query =
         FirebaseFirestore.instance.collection('client_details').orderBy('Date');
 
     if (widget.companyName.isNotEmpty) {
-      query = FirebaseFirestore.instance
-          .collection('client_details')
-          .where('Company Name', isEqualTo: widget.companyName)
-          .orderBy('Date');
+      query = query.where('Company Name', isEqualTo: widget.companyName);
     }
+
+    if (widget.year.isNotEmpty && widget.year != 'Select Year') {
+      query = query.where('Date', isGreaterThanOrEqualTo: '${widget.year}-01-01')
+          .where('Date', isLessThanOrEqualTo: '${widget.year}-12-31');
+    }
+
+    // if (widget.year.isNotEmpty && widget.year != 'Select Year') {
+    //   String monthNumber = '01';
+    //   if (widget.month.isNotEmpty && widget.month != 'Select Month') {
+    //     final monthIndex = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].indexOf(widget.month);
+    //     if(monthIndex != -1){
+    //       monthNumber = (monthIndex+1).toString().padLeft(2, '0');
+    //     }
+    //   }
+    //   String startDate = '${widget.year}-$monthNumber-01';
+    //   String endDate = '${widget.year}-$monthNumber-31';
+    //   query = query
+    //       .where('Date', isGreaterThanOrEqualTo: startDate)
+    //       .where('Date', isLessThanOrEqualTo: endDate);
+    // }
 
     query.snapshots().listen((QuerySnapshot snapshot) {
       List<MyUserDetailsModel> userDetails = snapshot.docs
@@ -158,6 +181,7 @@ class _MyUserDetailsState extends State<MyUserDetails> {
       setState(() {
         _userDetails = userDetails;
         _isLoading = false;
+        _noData = userDetails.isEmpty;
       });
     });
   }
@@ -165,130 +189,136 @@ class _MyUserDetailsState extends State<MyUserDetails> {
   @override
   void didUpdateWidget(covariant MyUserDetails oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.companyName != widget.companyName) {
-      _fetchUserDetails();
+    if (oldWidget.companyName != widget.companyName ||
+        oldWidget.year != widget.year ||
+        oldWidget.month != widget.month) {
+      fetchUserDetails();
     }
   }
 
   @override
   void initState() {
     super.initState();
-    _fetchUserDetails();
+    fetchUserDetails();
   }
 
   @override
   Widget build(BuildContext context) {
-    return _isLoading
-        ? const Center(child: CircularProgressIndicator())
-        : SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: SingleChildScrollView(
-              child: DataTable(
-                columns: const [
-                  DataColumn(label: Text('Sr No')),
-                  DataColumn(label: Text('Company Name')),
-                  DataColumn(label: Text('Type')),
-                  DataColumn(label: Text('Date')),
-                  DataColumn(label: Text('GST No')),
-                  DataColumn(label: Text('Contact Person')),
-                  DataColumn(label: Text('Contact Number')),
-                  DataColumn(label: Text('BDM Name')),
-                  DataColumn(label: Text('Balance Amount')),
-                  DataColumn(label: Text('Balance Payment')),
-                  DataColumn(label: Text('Images')),
-                ],
-                rows: _userDetails.asMap().entries.map((data) {
-                  final user = data.value;
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-                  return DataRow(
-                    cells: [
-                      DataCell(Text('${data.key + 1}')),
-                      DataCell(Text(user.companyName)),
-                      DataCell(Text(user.type)),
-                      DataCell(Text(user.date)),
-                      DataCell(Text(user.gstNo)),
-                      DataCell(Text(user.contactPerson)),
-                      DataCell(Text(user.contactNumber)),
-                      DataCell(Text(user.bdmName)),
+    if (_noData) {
+      return const Center(child: Text('No Data Available'));
+    }
 
-                      /// Balance Amount
-                      DataCell(
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(_calculateBalanceAmount(
-                                user.totalAmount,
-                                user.receivedAmount,
-                                user.balancePaymentAmount)),
-                            IconButton(
-                              icon: const Icon(Icons.edit),
-                              onPressed: () {
-                                _showEditDialog(context, user);
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: SingleChildScrollView(
+        child: DataTable(
+          columns: const [
+            DataColumn(label: Text('Sr No')),
+            DataColumn(label: Text('Company Name')),
+            DataColumn(label: Text('Type')),
+            DataColumn(label: Text('Date')),
+            DataColumn(label: Text('GST No')),
+            DataColumn(label: Text('Contact Person')),
+            DataColumn(label: Text('Contact Number')),
+            DataColumn(label: Text('BDM Name')),
+            DataColumn(label: Text('Balance Amount')),
+            DataColumn(label: Text('Balance Payment')),
+            DataColumn(label: Text('Images')),
+          ],
+          rows: _userDetails.asMap().entries.map((data) {
+            final user = data.value;
 
-                      /// Balance Payment
-                      DataCell(Text(
-                        (user.balancePaymentAmount == null ||
-                                user.balancePaymentAmount == '0')
-                            ? '0'
-                            : '${user.balancePaymentAmount} on ${user.balancePaymentDate ?? ''}',
-                      )),
+            return DataRow(
+              cells: [
+                DataCell(Text('${data.key + 1}')),
+                DataCell(Text(user.companyName)),
+                DataCell(Text(user.type)),
+                DataCell(Text(user.date)),
+                DataCell(Text(user.gstNo)),
+                DataCell(Text(user.contactPerson)),
+                DataCell(Text(user.contactNumber)),
+                DataCell(Text(user.bdmName)),
 
-                      /// Invoice Images
-                      DataCell(
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            user.imageList.isNotEmpty
-                                ? GestureDetector(
-                                    onTap: () => Get.to(() => FullImageViewer(
-                                        imageList: user.imageList)),
-                                    child: SizedBox(
-                                      width: 40,
-                                      height: 40,
-                                      child: Builder(
-                                        builder: (context) {
-                                          String firstImageBase64 =
-                                              user.imageList.first;
-                                          Uint8List? imageBytes =
-                                              decodeBase64(firstImageBase64);
-                                          if (imageBytes != null) {
-                                            return Image.memory(
-                                              imageBytes,
-                                              fit: BoxFit.cover,
-                                            );
-                                          } else {
-                                            return const Text('Invalid Image');
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  )
-                                : const Text('No Image'),
-                            IconButton(
-                              icon: const Icon(Icons.edit),
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => EditImagesDialog(
-                                    initialImages: user.imageList,
-                                    documentId: user.srNo,
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
+                /// Balance Amount
+                DataCell(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(_calculateBalanceAmount(user.totalAmount,
+                          user.receivedAmount, user.balancePaymentAmount)),
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () {
+                          _showEditDialog(context, user);
+                        },
                       ),
                     ],
-                  );
-                }).toList(),
-              ),
-            ),
-          );
+                  ),
+                ),
+
+                /// Balance Payment
+                DataCell(Text(
+                  (user.balancePaymentAmount == null ||
+                          user.balancePaymentAmount == '0')
+                      ? '0'
+                      : '${user.balancePaymentAmount} on ${user.balancePaymentDate ?? ''}',
+                )),
+
+                /// Invoice Images
+                DataCell(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      user.imageList.isNotEmpty
+                          ? GestureDetector(
+                              onTap: () => Get.to(() =>
+                                  FullImageViewer(imageList: user.imageList)),
+                              child: SizedBox(
+                                width: 40,
+                                height: 40,
+                                child: Builder(
+                                  builder: (context) {
+                                    String firstImageBase64 =
+                                        user.imageList.first;
+                                    Uint8List? imageBytes =
+                                        decodeBase64(firstImageBase64);
+                                    if (imageBytes != null) {
+                                      return Image.memory(
+                                        imageBytes,
+                                        fit: BoxFit.cover,
+                                      );
+                                    } else {
+                                      return const Text('Invalid Image');
+                                    }
+                                  },
+                                ),
+                              ),
+                            )
+                          : const Text('No Image'),
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => EditImagesDialog(
+                              initialImages: user.imageList,
+                              documentId: user.srNo,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          }).toList(),
+        ),
+      ),
+    );
   }
 }
