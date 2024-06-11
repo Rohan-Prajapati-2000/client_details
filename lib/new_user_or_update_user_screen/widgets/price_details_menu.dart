@@ -50,6 +50,8 @@ class PriceDetailsMenu extends StatelessWidget {
             controller.receivedAmountZKSEO,
             controller.validityZKSEO,
           ),
+
+
         ],
       ),
     );

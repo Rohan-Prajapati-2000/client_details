@@ -13,7 +13,7 @@ class YearDropdownButton extends StatefulWidget {
 
 class _YearDropdownButtonState extends State<YearDropdownButton> {
   List<String> _years = ['Select Year'];
-  String? _selectedYear = 'Select Year';
+  String _selectedYear = 'Select Year';
 
   @override
   void initState() {
@@ -60,7 +60,7 @@ class _YearDropdownButtonState extends State<YearDropdownButton> {
       ).toList(),
       onChanged: (val) {
         setState(() {
-          _selectedYear = val;
+          _selectedYear = val!;
         });
         widget.onYearChange(val!);
       },

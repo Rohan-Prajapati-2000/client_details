@@ -15,12 +15,18 @@ class MyUserDetails extends StatefulWidget {
   final String companyName;
   final String year;
   final String month;
+  final ValueNotifier<String> companyNameNotifier;
+  final ValueNotifier<String> yearNotifier;
+  final ValueNotifier<String> monthNotifier;
 
   const MyUserDetails(
       {required this.companyName,
       super.key,
       required this.year,
-      required this.month});
+      required this.month,
+      required this.companyNameNotifier,
+      required this.yearNotifier,
+      required this.monthNotifier});
 
   @override
   MyUserDetailsState createState() => MyUserDetailsState();
@@ -148,29 +154,65 @@ class MyUserDetailsState extends State<MyUserDetails> {
     Query query =
         FirebaseFirestore.instance.collection('client_details').orderBy('Date');
 
-    if (widget.companyName.isNotEmpty) {
-      query = query.where('Company Name', isEqualTo: widget.companyName);
+    String companyName = widget.companyNameNotifier.value;
+    String year = widget.yearNotifier.value;
+    String month = widget.monthNotifier.value;
+
+    if (companyName.isNotEmpty) {
+      query = query.where('Company Name', isEqualTo: companyName);
     }
 
-    if (widget.year.isNotEmpty && widget.year != 'Select Year') {
-      query = query.where('Date', isGreaterThanOrEqualTo: '${widget.year}-01-01')
-          .where('Date', isLessThanOrEqualTo: '${widget.year}-12-31');
+    if (year.isNotEmpty && year != 'Select Year') {
+      if (month.isNotEmpty && month != 'Select Month') {
+        String monthNumber = ([
+                  'January',
+                  'February',
+                  'March',
+                  'April',
+                  'May',
+                  'June',
+                  'July',
+                  'August',
+                  'September',
+                  'October',
+                  'November',
+                  'December'
+                ].indexOf(month) +
+                1)
+            .toString()
+            .padLeft(2, '0');
+        String startDate = '$year-$monthNumber-01';
+        String endDate = '$year-$monthNumber-31';
+        query = query
+            .where('Date', isGreaterThanOrEqualTo: startDate)
+            .where('Date', isLessThanOrEqualTo: endDate);
+      } else {
+        String startDate = '$year-01-01';
+        String endDate = '$year-12-31';
+        query = query
+            .where('Date', isGreaterThanOrEqualTo: startDate)
+            .where('Date', isLessThanOrEqualTo: endDate);
+      }
+    } else if (month.isNotEmpty && month != 'Select Month') {
+      String monthNumber = ([
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December'
+              ].indexOf(month) +
+              1)
+          .toString()
+          .padLeft(2, '0');
+      query = query.where('Date', arrayContainsAny: ['-$monthNumber-']);
     }
-
-    // if (widget.year.isNotEmpty && widget.year != 'Select Year') {
-    //   String monthNumber = '01';
-    //   if (widget.month.isNotEmpty && widget.month != 'Select Month') {
-    //     final monthIndex = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].indexOf(widget.month);
-    //     if(monthIndex != -1){
-    //       monthNumber = (monthIndex+1).toString().padLeft(2, '0');
-    //     }
-    //   }
-    //   String startDate = '${widget.year}-$monthNumber-01';
-    //   String endDate = '${widget.year}-$monthNumber-31';
-    //   query = query
-    //       .where('Date', isGreaterThanOrEqualTo: startDate)
-    //       .where('Date', isLessThanOrEqualTo: endDate);
-    // }
 
     query.snapshots().listen((QuerySnapshot snapshot) {
       List<MyUserDetailsModel> userDetails = snapshot.docs

@@ -35,6 +35,11 @@ class SaveFromDataController extends GetxController {
   final isCheckedVirtualTour = false.obs;
   final isCheckedGBPM = false.obs;
   final isCheckedZKSEO = false.obs;
+  final isGoogleAds = false.obs;
+  final isGoogleAdsRecharge = false.obs;
+  final isFacebook = false.obs;
+  final isFacebookRecharge = false.obs;
+
 
   final totalAmountSEO = TextEditingController();
   final receivedAmountSEO = TextEditingController();
@@ -51,6 +56,16 @@ class SaveFromDataController extends GetxController {
   final totalAmountZKSEO = TextEditingController();
   final receivedAmountZKSEO = TextEditingController();
   final validityZKSEO = ''.obs;
+
+  final totalAmountisGoogleAds = TextEditingController();
+  final receivedAmountisGoogleAds = TextEditingController();
+  final validityisGoogleAds = ''.obs;
+
+  final totalAmountisGoogleAdsRecharge = TextEditingController();
+  final receivedAmountisGoogleAdsRecharge = TextEditingController();
+  final validityisGoogleAdsRecharge = ''.obs;
+
+
 
   final subscriptions = <SubscriptionModel>[].obs;
 

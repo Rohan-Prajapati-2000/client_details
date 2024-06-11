@@ -1,35 +1,34 @@
 import 'package:flutter/material.dart';
 
 class MonthDropdownButton extends StatefulWidget {
-
   final ValueChanged<String> onMonthChange;
 
-  MonthDropdownButton({super.key, required this.onMonthChange});
+  MonthDropdownButton({Key? key, required this.onMonthChange}) : super(key: key);
 
   @override
   State<MonthDropdownButton> createState() => _MonthDropdownButtonState();
 }
 
 class _MonthDropdownButtonState extends State<MonthDropdownButton> {
-  final _months = [
+  final List<String> _months = [
     'Select Month', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
-  String? selectedValue = 'Select Month';
+  String? _selectedValue = 'Select Month';
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonFormField(
-        value: selectedValue,
-        items: _months.map(
-                (e) => DropdownMenuItem(value: e, child: Text(e),)
-        ).toList(),
-        onChanged: (val) {
+    return DropdownButtonFormField<String>(
+      value: _selectedValue,
+      items: _months.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+      onChanged: (newValue) {
+        if (newValue != _selectedValue) { // Check if the value changed
           setState(() {
-            selectedValue = val;
+            _selectedValue = newValue;
           });
-          widget.onMonthChange(val!);
+          widget.onMonthChange(newValue!);
         }
+      },
     );
   }
 }
