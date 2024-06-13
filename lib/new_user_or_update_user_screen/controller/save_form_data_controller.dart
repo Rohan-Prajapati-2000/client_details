@@ -35,10 +35,19 @@ class SaveFromDataController extends GetxController {
   final isCheckedVirtualTour = false.obs;
   final isCheckedGBPM = false.obs;
   final isCheckedZKSEO = false.obs;
-  final isGoogleAds = false.obs;
-  final isGoogleAdsRecharge = false.obs;
-  final isFacebook = false.obs;
-  final isFacebookRecharge = false.obs;
+  final isCheckedGoogleAds = false.obs;
+  final isCheckedGoogleAdsRecharge = false.obs;
+  final isCheckedFacebook = false.obs;
+  final isCheckedFacebookRecharge = false.obs;
+  final isCheckedWebsite = false.obs;
+  final isCheckedCustomDevelopment = false.obs;
+  final isCheckedWebsiteAmc = false.obs;
+  final isCheckedProductPhotography = false.obs;
+  final isCheckedDomain = false.obs;
+  final isCheckedHosting = false.obs;
+  final isCheckedQrCode = false.obs;
+  final isCheckedWebSEO = false.obs;
+  final isCheckedOthers = false.obs;
 
 
   final totalAmountSEO = TextEditingController();
@@ -57,14 +66,57 @@ class SaveFromDataController extends GetxController {
   final receivedAmountZKSEO = TextEditingController();
   final validityZKSEO = ''.obs;
 
-  final totalAmountisGoogleAds = TextEditingController();
-  final receivedAmountisGoogleAds = TextEditingController();
-  final validityisGoogleAds = ''.obs;
+  final totalAmountGoogleAds = TextEditingController();
+  final receivedAmountGoogleAds = TextEditingController();
+  final validityGoogleAds = ''.obs;
 
-  final totalAmountisGoogleAdsRecharge = TextEditingController();
-  final receivedAmountisGoogleAdsRecharge = TextEditingController();
-  final validityisGoogleAdsRecharge = ''.obs;
+  final totalAmountGoogleAdsRecharge = TextEditingController();
+  final receivedAmountGoogleAdsRecharge = TextEditingController();
+  final validityGoogleAdsRecharge = ''.obs;
 
+  final totalAmountFacebook = TextEditingController();
+  final receivedAmountFacebook = TextEditingController();
+  final validityFacebook = ''.obs;
+
+  final totalAmountFacebookRecharge = TextEditingController();
+  final receivedAmountFacebookRecharge = TextEditingController();
+  final validityFacebookRecharge= ''.obs;
+
+  final totalAmountWebsite = TextEditingController();
+  final receivedAmountWebsite = TextEditingController();
+  final validityWebsite = ''.obs;
+
+  final totalAmountCustomDevelopment = TextEditingController();
+  final receivedAmountCustomDevelopment = TextEditingController();
+  final validityCustomDevelopment = ''.obs;
+
+  final totalAmountWebsiteAmc = TextEditingController();
+  final receivedAmountWebsiteAmc = TextEditingController();
+  final validityWebsiteAmc = ''.obs;
+
+  final totalAmountProductPhotography = TextEditingController();
+  final receivedAmountProductPhotography = TextEditingController();
+  final validityProductPhotography = ''.obs;
+
+  final totalAmountDomain = TextEditingController();
+  final receivedAmountDomain = TextEditingController();
+  final validityDomain = ''.obs;
+
+  final totalAmountHosting = TextEditingController();
+  final receivedAmountHosting = TextEditingController();
+  final validityHosting = ''.obs;
+
+  final totalAmountQrCode = TextEditingController();
+  final receivedAmountQrCode = TextEditingController();
+  final validityQrCode = ''.obs;
+
+  final totalAmountWebSEO = TextEditingController();
+  final receivedAmountWebSEO = TextEditingController();
+  final validityWebSEO = ''.obs;
+
+  final totalAmountOthers = TextEditingController();
+  final receivedAmountOthers = TextEditingController();
+  final validityOthers = ''.obs;
 
 
   final subscriptions = <SubscriptionModel>[].obs;

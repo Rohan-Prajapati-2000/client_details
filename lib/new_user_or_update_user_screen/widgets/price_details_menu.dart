@@ -16,7 +16,7 @@ class PriceDetailsMenu extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: SSizes.defaultSpace * 5),
       child: Column(
         children: [
-          MainHeading(),
+          const MainHeading(),
           const SizedBox(height: SSizes.spaceBtwSections / 2),
           buildSubscriptionRow(
             context,
@@ -26,6 +26,7 @@ class PriceDetailsMenu extends StatelessWidget {
             controller.receivedAmountSEO,
             controller.validitySEO,
           ),
+          SizedBox(height: SSizes.spaceBtwItems),
           buildSubscriptionRow(
             context,
             controller.isCheckedVirtualTour,
@@ -49,6 +50,123 @@ class PriceDetailsMenu extends StatelessWidget {
             controller.totalAmountZKSEO,
             controller.receivedAmountZKSEO,
             controller.validityZKSEO,
+          ),
+
+          buildSubscriptionRow(
+            context,
+            controller.isCheckedGoogleAds,
+            'Google Ads',
+            controller.totalAmountGoogleAds,
+            controller.receivedAmountGoogleAds,
+            controller.validityGoogleAds,
+          ),
+
+          buildSubscriptionRow(
+            context,
+            controller.isCheckedGoogleAdsRecharge,
+            'Google Ads Recharge',
+            controller.totalAmountGoogleAdsRecharge,
+            controller.receivedAmountGoogleAdsRecharge,
+            controller.validityGoogleAdsRecharge,
+          ),
+
+          buildSubscriptionRow(
+            context,
+            controller.isCheckedFacebook,
+            'Facebook',
+            controller.totalAmountFacebook,
+            controller.receivedAmountFacebook,
+            controller.validityFacebook,
+          ),
+
+          buildSubscriptionRow(
+            context,
+            controller.isCheckedFacebookRecharge,
+            'Facebook ads Recharge',
+            controller.totalAmountFacebookRecharge,
+            controller.receivedAmountFacebookRecharge,
+            controller.validityFacebookRecharge,
+          ),
+
+          buildSubscriptionRow(
+            context,
+            controller.isCheckedWebsite,
+            'Website',
+            controller.totalAmountWebsite,
+            controller.receivedAmountWebsite,
+            controller.validityWebsite,
+          ),
+
+          buildSubscriptionRow(
+            context,
+            controller.isCheckedCustomDevelopment,
+            'Custom Development',
+            controller.totalAmountCustomDevelopment,
+            controller.receivedAmountCustomDevelopment,
+            controller.validityCustomDevelopment,
+          ),
+
+          buildSubscriptionRow(
+            context,
+            controller.isCheckedWebsiteAmc,
+            'Website Amc',
+            controller.totalAmountWebsiteAmc,
+            controller.receivedAmountWebsiteAmc,
+            controller.validityWebsiteAmc,
+          ),
+
+          buildSubscriptionRow(
+            context,
+            controller.isCheckedProductPhotography,
+            'Product Photography',
+            controller.totalAmountProductPhotography,
+            controller.receivedAmountProductPhotography,
+            controller.validityProductPhotography,
+          ),
+
+          buildSubscriptionRow(
+            context,
+            controller.isCheckedDomain,
+            'Domain',
+            controller.totalAmountDomain,
+            controller.receivedAmountDomain,
+            controller.validityDomain,
+          ),
+
+          buildSubscriptionRow(
+            context,
+            controller.isCheckedHosting,
+            'Hosting',
+            controller.totalAmountHosting,
+            controller.receivedAmountHosting,
+            controller.validityHosting,
+          ),
+
+          buildSubscriptionRow(
+            context,
+            controller.isCheckedQrCode,
+            'QR Code',
+            controller.totalAmountQrCode,
+            controller.receivedAmountQrCode,
+            controller.validityQrCode,
+          ),
+
+          buildSubscriptionRow(
+            context,
+            controller.isCheckedWebSEO,
+            'Web SEO',
+            controller.totalAmountWebSEO,
+            controller.receivedAmountWebSEO,
+            controller.validityWebSEO,
+          ),
+
+          buildSubscriptionRow(
+            context,
+            controller.isCheckedOthers,
+            'Others',
+            controller.totalAmountOthers,
+            controller.receivedAmountOthers,
+            controller.validityOthers,
           ),
 
 
@@ -95,6 +213,9 @@ class PriceDetailsMenu extends StatelessWidget {
                 )
               : SizedBox(),
         ),
+
+        const SizedBox(width: SSizes.spaceBtwItems),
+
         Obx(
           () => isChecked.value
               ? Expanded(
@@ -105,6 +226,9 @@ class PriceDetailsMenu extends StatelessWidget {
                 )
               : SizedBox(),
         ),
+
+        const SizedBox(width: SSizes.spaceBtwItems),
+
         Obx(
           () => isChecked.value
               ? Expanded(
