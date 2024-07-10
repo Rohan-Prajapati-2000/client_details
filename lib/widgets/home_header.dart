@@ -173,61 +173,6 @@ class _MyHomeHeaderState extends State<MyHomeHeader> {
                               },
                             ),
                           ),
-
-                          // Expanded(
-                          //   child: Autocomplete<String>(
-                          //     optionsBuilder:
-                          //         (TextEditingValue textEditingValue) async {
-                          //       if (textEditingValue.text.isEmpty) {
-                          //         return const Iterable<String>.empty();
-                          //       }
-                          //       // Fetch matching company names from Firestore
-                          //       QuerySnapshot snapshot = await FirebaseFirestore
-                          //           .instance
-                          //           .collection('client_details')
-                          //           .where('Company Name',
-                          //               isGreaterThanOrEqualTo:
-                          //                   textEditingValue.text)
-                          //           .where('Company Name',
-                          //               isLessThanOrEqualTo:
-                          //                   '${textEditingValue.text}\uf8ff')
-                          //           .get();
-                          //       List<String> companyNames = snapshot.docs
-                          //           .map((doc) => doc['Company Name'] as String)
-                          //           .toList();
-                          //       return companyNames;
-                          //     },
-                          //     fieldViewBuilder: (BuildContext context,
-                          //         TextEditingController textEditingController,
-                          //         FocusNode focusNode,
-                          //         VoidCallback onFieldSubmitted) {
-                          //       _companyNameController.text =
-                          //           textEditingController.text;
-                          //       return TextField(
-                          //         controller: textEditingController,
-                          //         focusNode: focusNode,
-                          //         decoration: const InputDecoration(
-                          //             labelText: 'Company Name'),
-                          //       );
-                          //     },
-                          //     onSelected: (String selection) {
-                          //       _companyNameController.text = selection;
-                          //       _selectedYearNotifier.value = selection;
-                          //     },
-                          //   ),
-                          // ),
-                          // const SizedBox(width: SSizes.spaceBtwItems / 2),
-                          // Expanded(child: YearDropdownButton(
-                          //   onYearChange: (years) {
-                          //     _selectedYearNotifier.value = years;
-                          //   },
-                          // )),
-                          // const SizedBox(width: SSizes.spaceBtwItems / 2),
-                          // Expanded(child: MonthDropdownButton(
-                          //   onMonthChange: (month) {
-                          //     _selectMonthNotifire.value = month;
-                          //   },
-                          // )),
                           const SizedBox(width: SSizes.spaceBtwItems / 2),
                           Expanded(child: ExpiredAndPendingDropdownButton()),
                           const SizedBox(width: SSizes.spaceBtwItems / 2),

@@ -14,9 +14,9 @@ class ValidityDropDown extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       child: DropdownButton<String>(
-        hint: Text('Select Validity'),
+        hint: const Text('Select Validity'),
         value: selectedValue.isEmpty ? null : selectedValue,
-        items: <String>['1 month', '3 months', '6 months', '12 months']
+        items: <String>['1 month', '3 months', '4 months', '6 months', '12 months']
             .map((String value) {
           return DropdownMenuItem<String>(
             value: value,

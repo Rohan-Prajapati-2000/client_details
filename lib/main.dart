@@ -5,11 +5,17 @@ import 'package:get/get.dart';
 import 'package:practice/utils/theme/theme.dart';
 import 'firebase_options.dart';
 import 'home_screen/home.dart';
+import 'package:cron/cron.dart';
 
 void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  Cron().schedule(Schedule.parse('* * * * * *'), () async=> {
+
+  });
+
   runApp(const MyApp());
 }
 
