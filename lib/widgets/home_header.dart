@@ -173,6 +173,7 @@ class _MyHomeHeaderState extends State<MyHomeHeader> {
                               },
                             ),
                           ),
+
                           const SizedBox(width: SSizes.spaceBtwItems / 2),
                           Expanded(child: ExpiredAndPendingDropdownButton()),
                           const SizedBox(width: SSizes.spaceBtwItems / 2),
