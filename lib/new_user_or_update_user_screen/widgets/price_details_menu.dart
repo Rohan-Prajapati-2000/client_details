@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:practice/utils/constants/sizes.dart';
+import 'package:practice/widgets/custom_shape/containers/circular_container.dart';
 import '../controller/save_form_data_controller.dart';
 import 'main_heading.dart';
 import 'validity_dropdown.dart';
@@ -35,6 +36,7 @@ class PriceDetailsMenu extends StatelessWidget {
             controller.receivedAmountVirtualTour,
             controller.validityVirtualTour,
           ),
+          SizedBox(height: SSizes.spaceBtwItems),
           buildSubscriptionRow(
             context,
             controller.isCheckedGBPM,
@@ -43,6 +45,8 @@ class PriceDetailsMenu extends StatelessWidget {
             controller.receivedAmountGBPM,
             controller.validityGBPM,
           ),
+          SizedBox(height: SSizes.spaceBtwItems),
+
           buildSubscriptionRow(
             context,
             controller.isCheckedZKSEO,
@@ -51,6 +55,7 @@ class PriceDetailsMenu extends StatelessWidget {
             controller.receivedAmountZKSEO,
             controller.validityZKSEO,
           ),
+          SizedBox(height: SSizes.spaceBtwItems),
 
           buildSubscriptionRow(
             context,
@@ -60,6 +65,7 @@ class PriceDetailsMenu extends StatelessWidget {
             controller.receivedAmountGoogleAds,
             controller.validityGoogleAds,
           ),
+          SizedBox(height: SSizes.spaceBtwItems),
 
           buildSubscriptionRow(
             context,
@@ -69,6 +75,7 @@ class PriceDetailsMenu extends StatelessWidget {
             controller.receivedAmountGoogleAdsRecharge,
             controller.validityGoogleAdsRecharge,
           ),
+          SizedBox(height: SSizes.spaceBtwItems),
 
           buildSubscriptionRow(
             context,
@@ -78,6 +85,7 @@ class PriceDetailsMenu extends StatelessWidget {
             controller.receivedAmountFacebook,
             controller.validityFacebook,
           ),
+          SizedBox(height: SSizes.spaceBtwItems),
 
           buildSubscriptionRow(
             context,
@@ -87,6 +95,7 @@ class PriceDetailsMenu extends StatelessWidget {
             controller.receivedAmountFacebookRecharge,
             controller.validityFacebookRecharge,
           ),
+          SizedBox(height: SSizes.spaceBtwItems),
 
           buildSubscriptionRow(
             context,
@@ -96,6 +105,7 @@ class PriceDetailsMenu extends StatelessWidget {
             controller.receivedAmountWebsite,
             controller.validityWebsite,
           ),
+          SizedBox(height: SSizes.spaceBtwItems),
 
           buildSubscriptionRow(
             context,
@@ -105,6 +115,7 @@ class PriceDetailsMenu extends StatelessWidget {
             controller.receivedAmountCustomDevelopment,
             controller.validityCustomDevelopment,
           ),
+          SizedBox(height: SSizes.spaceBtwItems),
 
           buildSubscriptionRow(
             context,
@@ -114,6 +125,7 @@ class PriceDetailsMenu extends StatelessWidget {
             controller.receivedAmountWebsiteAmc,
             controller.validityWebsiteAmc,
           ),
+          SizedBox(height: SSizes.spaceBtwItems),
 
           buildSubscriptionRow(
             context,
@@ -123,6 +135,7 @@ class PriceDetailsMenu extends StatelessWidget {
             controller.receivedAmountProductPhotography,
             controller.validityProductPhotography,
           ),
+          SizedBox(height: SSizes.spaceBtwItems),
 
           buildSubscriptionRow(
             context,
@@ -132,6 +145,7 @@ class PriceDetailsMenu extends StatelessWidget {
             controller.receivedAmountDomain,
             controller.validityDomain,
           ),
+          SizedBox(height: SSizes.spaceBtwItems),
 
           buildSubscriptionRow(
             context,
@@ -141,6 +155,7 @@ class PriceDetailsMenu extends StatelessWidget {
             controller.receivedAmountHosting,
             controller.validityHosting,
           ),
+          SizedBox(height: SSizes.spaceBtwItems),
 
           buildSubscriptionRow(
             context,
@@ -150,6 +165,7 @@ class PriceDetailsMenu extends StatelessWidget {
             controller.receivedAmountQrCode,
             controller.validityQrCode,
           ),
+          SizedBox(height: SSizes.spaceBtwItems),
 
           buildSubscriptionRow(
             context,
@@ -159,6 +175,7 @@ class PriceDetailsMenu extends StatelessWidget {
             controller.receivedAmountWebSEO,
             controller.validityWebSEO,
           ),
+          SizedBox(height: SSizes.spaceBtwItems),
 
           buildSubscriptionRow(
             context,
@@ -204,11 +221,16 @@ class PriceDetailsMenu extends StatelessWidget {
         Obx(
           () => isChecked.value
               ? Expanded(
-                  child: ValidityDropDown(
-                    selectedValue: validity.value,
-                    onSelected: (val) {
-                      validity.value = val;
-                    },
+                  child: SRoundedContainer(
+                    showBorder: true,
+                    borderColor: Colors.grey,
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: ValidityDropDown(
+                      selectedValue: validity.value,
+                      onSelected: (val) {
+                        validity.value = val;
+                      },
+                    ),
                   ),
                 )
               : SizedBox(),

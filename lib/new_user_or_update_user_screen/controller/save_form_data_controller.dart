@@ -130,12 +130,38 @@ class SaveFromDataController extends GetxController {
     totalAmountVirtualTour.addListener(calculateTotalAmount);
     totalAmountGBPM.addListener(calculateTotalAmount);
     totalAmountZKSEO.addListener(calculateTotalAmount);
+    totalAmountGoogleAds.addListener(calculateTotalAmount);
+    totalAmountGoogleAdsRecharge.addListener(calculateTotalAmount);
+    totalAmountFacebook.addListener(calculateTotalAmount);
+    totalAmountFacebookRecharge.addListener(calculateTotalAmount);
+    totalAmountWebsite.addListener(calculateTotalAmount);
+    totalAmountCustomDevelopment.addListener(calculateTotalAmount);
+    totalAmountWebsiteAmc.addListener(calculateTotalAmount);
+    totalAmountProductPhotography.addListener(calculateTotalAmount);
+    totalAmountDomain.addListener(calculateTotalAmount);
+    totalAmountHosting.addListener(calculateTotalAmount);
+    totalAmountQrCode.addListener(calculateTotalAmount);
+    totalAmountWebSEO.addListener(calculateTotalAmount);
+    totalAmountOthers.addListener(calculateTotalAmount);
 
     // Add listeners to the checkboxes
     ever(isCheckedSEO, (_) => calculateTotalAmount());
     ever(isCheckedVirtualTour, (_) => calculateTotalAmount());
     ever(isCheckedGBPM, (_) => calculateTotalAmount());
     ever(isCheckedZKSEO, (_) => calculateTotalAmount());
+    ever(isCheckedGoogleAds, (_) => calculateTotalAmount());
+    ever(isCheckedGoogleAdsRecharge, (_) => calculateTotalAmount());
+    ever(isCheckedFacebook, (_) => calculateTotalAmount());
+    ever(isCheckedFacebookRecharge, (_) => calculateTotalAmount());
+    ever(isCheckedWebsite, (_) => calculateTotalAmount());
+    ever(isCheckedCustomDevelopment, (_) => calculateTotalAmount());
+    ever(isCheckedWebsiteAmc, (_) => calculateTotalAmount());
+    ever(isCheckedProductPhotography, (_) => calculateTotalAmount());
+    ever(isCheckedDomain, (_) => calculateTotalAmount());
+    ever(isCheckedHosting, (_) => calculateTotalAmount());
+    ever(isCheckedQrCode, (_) => calculateTotalAmount());
+    ever(isCheckedWebSEO, (_) => calculateTotalAmount());
+    ever(isCheckedOthers, (_) => calculateTotalAmount());
   }
 
   void addSubscription(SubscriptionModel subscription) {
@@ -161,6 +187,33 @@ class SaveFromDataController extends GetxController {
       total += double.tryParse(totalAmountGBPM.text) ?? 0;
     }
     if (isCheckedZKSEO.value) {
+      total += double.tryParse(totalAmountZKSEO.text) ?? 0;
+    }
+    if (isCheckedGoogleAds.value) {
+      total += double.tryParse(totalAmountZKSEO.text) ?? 0;
+    }if (isCheckedGoogleAdsRecharge.value) {
+      total += double.tryParse(totalAmountZKSEO.text) ?? 0;
+    }if (isCheckedFacebook.value) {
+      total += double.tryParse(totalAmountZKSEO.text) ?? 0;
+    }if (isCheckedFacebookRecharge.value) {
+      total += double.tryParse(totalAmountZKSEO.text) ?? 0;
+    }if (isCheckedWebsite.value) {
+      total += double.tryParse(totalAmountZKSEO.text) ?? 0;
+    }if (isCheckedCustomDevelopment.value) {
+      total += double.tryParse(totalAmountZKSEO.text) ?? 0;
+    }if (isCheckedWebsiteAmc.value) {
+      total += double.tryParse(totalAmountZKSEO.text) ?? 0;
+    }if (isCheckedProductPhotography.value) {
+      total += double.tryParse(totalAmountZKSEO.text) ?? 0;
+    }if (isCheckedDomain.value) {
+      total += double.tryParse(totalAmountZKSEO.text) ?? 0;
+    }if (isCheckedHosting.value) {
+      total += double.tryParse(totalAmountZKSEO.text) ?? 0;
+    }if (isCheckedQrCode.value) {
+      total += double.tryParse(totalAmountZKSEO.text) ?? 0;
+    }if (isCheckedWebSEO.value) {
+      total += double.tryParse(totalAmountZKSEO.text) ?? 0;
+    }if (isCheckedOthers.value) {
       total += double.tryParse(totalAmountZKSEO.text) ?? 0;
     }
 
@@ -315,6 +368,253 @@ class SaveFromDataController extends GetxController {
         productBalanceAmount: receivedAmountZKSEO.text,
       ));
     }
+    if (isCheckedGoogleAds.value) {
+      addSubscription(
+        SubscriptionModel(
+          isSelected: true,
+          productTitle: 'Google Ads',
+          validity: validityGoogleAds.value,
+          productTotalAmount: totalAmountGoogleAds.text,
+          productBalanceAmount: receivedAmountGoogleAds.text,
+        ),
+      );
+    } else {
+      removeSubscription(SubscriptionModel(
+        isSelected: true,
+        productTitle: 'Google Ads',
+        validity: validityGoogleAds.value,
+        productTotalAmount: totalAmountGoogleAds.text,
+        productBalanceAmount: receivedAmountGoogleAds.text,
+      ));
+    }
+    if (isCheckedGoogleAdsRecharge.value) {
+      addSubscription(
+        SubscriptionModel(
+          isSelected: true,
+          productTitle: "Google Ads Recharge",
+          validity: validityGoogleAdsRecharge.value,
+          productTotalAmount: totalAmountGoogleAdsRecharge.text,
+          productBalanceAmount: receivedAmountGoogleAdsRecharge.text,
+        ),
+      );
+    } else {
+      removeSubscription(SubscriptionModel(
+        isSelected: true,
+        productTitle: "Google Ads Recharge",
+        validity: validityGoogleAdsRecharge.value,
+        productTotalAmount: totalAmountGoogleAdsRecharge.text,
+        productBalanceAmount: receivedAmountGoogleAdsRecharge.text,
+      ));
+    }
+    if (isCheckedFacebook.value) {
+      addSubscription(
+        SubscriptionModel(
+          isSelected: true,
+          productTitle: "Facebook",
+          validity: validityFacebook.value,
+          productTotalAmount: totalAmountFacebook.text,
+          productBalanceAmount: receivedAmountFacebook.text,
+        ),
+      );
+    } else {
+      removeSubscription(SubscriptionModel(
+        isSelected: true,
+        productTitle: "Facebook",
+        validity: validityFacebook.value,
+        productTotalAmount: totalAmountFacebook.text,
+        productBalanceAmount: receivedAmountFacebook.text,
+      ));
+    }
+    if (isCheckedFacebookRecharge.value) {
+      addSubscription(
+        SubscriptionModel(
+          isSelected: true,
+          productTitle: "Facebook Ads Recharge",
+          validity: validityFacebookRecharge.value,
+          productTotalAmount: totalAmountFacebookRecharge.text,
+          productBalanceAmount: receivedAmountFacebookRecharge.text,
+        ),
+      );
+    } else {
+      removeSubscription(SubscriptionModel(
+        isSelected: true,
+        productTitle: "Facebook Ads Recharge",
+        validity: validityFacebookRecharge.value,
+        productTotalAmount: totalAmountFacebookRecharge.text,
+        productBalanceAmount: receivedAmountFacebookRecharge.text,
+      ));
+    }
+    if (isCheckedWebsite.value) {
+      addSubscription(
+        SubscriptionModel(
+          isSelected: true,
+          productTitle: "Website",
+          validity: validityWebsite.value,
+          productTotalAmount: totalAmountWebsite.text,
+          productBalanceAmount: receivedAmountWebsite.text,
+        ),
+      );
+    } else {
+      removeSubscription(SubscriptionModel(
+        isSelected: true,
+        productTitle: "Website",
+        validity: validityWebsite.value,
+        productTotalAmount: totalAmountWebsite.text,
+        productBalanceAmount: receivedAmountWebsite.text,
+      ));
+    }
+    if (isCheckedCustomDevelopment.value) {
+      addSubscription(
+        SubscriptionModel(
+          isSelected: true,
+          productTitle: "Custom Development",
+          validity: validityCustomDevelopment.value,
+          productTotalAmount: totalAmountCustomDevelopment.text,
+          productBalanceAmount: receivedAmountCustomDevelopment.text,
+        ),
+      );
+    } else {
+      removeSubscription(SubscriptionModel(
+        isSelected: true,
+        productTitle: "Custom Development",
+        validity: validityCustomDevelopment.value,
+        productTotalAmount: totalAmountCustomDevelopment.text,
+        productBalanceAmount: receivedAmountCustomDevelopment.text,
+      ));
+    }
+    if (isCheckedWebsiteAmc.value) {
+      addSubscription(
+        SubscriptionModel(
+          isSelected: true,
+          productTitle: "Website Amc",
+          validity: validityWebsiteAmc.value,
+          productTotalAmount: totalAmountWebsiteAmc.text,
+          productBalanceAmount: receivedAmountWebsiteAmc.text,
+        ),
+      );
+    } else {
+      removeSubscription(SubscriptionModel(
+        isSelected: true,
+        productTitle: "Website Amc",
+        validity: validityWebsiteAmc.value,
+        productTotalAmount: totalAmountWebsiteAmc.text,
+        productBalanceAmount: receivedAmountWebsiteAmc.text,
+      ));
+    }
+    if (isCheckedProductPhotography.value) {
+      addSubscription(
+        SubscriptionModel(
+          isSelected: true,
+          productTitle: "Product Photography",
+          validity: validityProductPhotography.value,
+          productTotalAmount: totalAmountProductPhotography.text,
+          productBalanceAmount: receivedAmountProductPhotography.text,
+        ),
+      );
+    } else {
+      removeSubscription(SubscriptionModel(
+        isSelected: true,
+        productTitle: "Product Photography",
+        validity: validityProductPhotography.value,
+        productTotalAmount: totalAmountProductPhotography.text,
+        productBalanceAmount: receivedAmountProductPhotography.text,
+      ));
+    }
+    if (isCheckedDomain.value) {
+      addSubscription(
+        SubscriptionModel(
+          isSelected: true,
+          productTitle: "Domain",
+          validity: validityDomain.value,
+          productTotalAmount: totalAmountDomain.text,
+          productBalanceAmount: receivedAmountDomain.text,
+        ),
+      );
+    } else {
+      removeSubscription(SubscriptionModel(
+        isSelected: true,
+        productTitle: "Domain",
+        validity: validityDomain.value,
+        productTotalAmount: totalAmountDomain.text,
+        productBalanceAmount: receivedAmountDomain.text,
+      ));
+    }
+    if (isCheckedHosting.value) {
+      addSubscription(
+        SubscriptionModel(
+          isSelected: true,
+          productTitle: "Hosting",
+          validity: validityHosting.value,
+          productTotalAmount: totalAmountHosting.text,
+          productBalanceAmount: receivedAmountHosting.text,
+        ),
+      );
+    } else {
+      removeSubscription(SubscriptionModel(
+        isSelected: true,
+        productTitle: "Hosting",
+        validity: validityHosting.value,
+        productTotalAmount: totalAmountHosting.text,
+        productBalanceAmount: receivedAmountHosting.text,
+      ));
+    }
+    if (isCheckedQrCode.value) {
+      addSubscription(
+        SubscriptionModel(
+          isSelected: true,
+          productTitle: "QR Code",
+          validity: validityQrCode.value,
+          productTotalAmount: totalAmountQrCode.text,
+          productBalanceAmount: receivedAmountQrCode.text,
+        ),
+      );
+    } else {
+      removeSubscription(SubscriptionModel(
+        isSelected: true,
+        productTitle: "QR Code",
+        validity: validityQrCode.value,
+        productTotalAmount: totalAmountQrCode.text,
+        productBalanceAmount: receivedAmountQrCode.text,
+      ));
+    }
+    if (isCheckedWebSEO.value) {
+      addSubscription(
+        SubscriptionModel(
+          isSelected: true,
+          productTitle: "Web SEO",
+          validity: validityWebSEO.value,
+          productTotalAmount: totalAmountWebSEO.text,
+          productBalanceAmount: receivedAmountWebSEO.text,
+        ),
+      );
+    } else {
+      removeSubscription(SubscriptionModel(
+        isSelected: true,
+        productTitle: "Web SEO",
+        validity: validityWebSEO.value,
+        productTotalAmount: totalAmountWebSEO.text,
+        productBalanceAmount: receivedAmountWebSEO.text,
+      ));
+    }
+    if (isCheckedOthers.value) {
+      addSubscription(
+        SubscriptionModel(
+          isSelected: true,
+          productTitle: "Others",
+          validity: validityOthers.value,
+          productTotalAmount: totalAmountOthers.text,
+          productBalanceAmount: receivedAmountOthers.text,
+        ),
+      );
+    } else {
+      removeSubscription(SubscriptionModel(
+        isSelected: true,
+        productTitle: "Others",
+        validity: validityOthers.value,
+        productTotalAmount: totalAmountOthers.text,
+        productBalanceAmount: receivedAmountOthers.text,
+      ));
+    }
 
     saveFormDataToFirestore();
   }
@@ -336,17 +636,69 @@ class SaveFromDataController extends GetxController {
     isCheckedVirtualTour.value = false;
     isCheckedGBPM.value = false;
     isCheckedZKSEO.value = false;
+    isCheckedGoogleAds.value = false;
+    isCheckedGoogleAdsRecharge.value = false;
+    isCheckedFacebook.value = false;
+    isCheckedFacebookRecharge.value = false;
+    isCheckedWebsite.value = false;
+    isCheckedCustomDevelopment.value = false;
+    isCheckedWebsiteAmc.value = false;
+    isCheckedProductPhotography.value = false;
+    isCheckedDomain.value = false;
+    isCheckedHosting.value = false;
+    isCheckedQrCode.value = false;
+    isCheckedWebSEO.value = false;
+    isCheckedOthers.value = false;
     totalAmountSEO.clear();
-    receivedAmountSEO.clear();
-    validitySEO.value = '';
     totalAmountVirtualTour.clear();
-    receivedAmountVirtualTour.clear();
-    validityVirtualTour.value = '';
     totalAmountGBPM.clear();
-    receivedAmountGBPM.clear();
-    validityGBPM.value = '';
     totalAmountZKSEO.clear();
+    totalAmountGoogleAds.clear();
+    totalAmountGoogleAdsRecharge.clear();
+    totalAmountFacebook.clear();
+    totalAmountFacebookRecharge.clear();
+    totalAmountWebsite.clear();
+    totalAmountCustomDevelopment.clear();
+    totalAmountWebsiteAmc.clear();
+    totalAmountProductPhotography.clear();
+    totalAmountDomain.clear();
+    totalAmountHosting.clear();
+    totalAmountQrCode.clear();
+    totalAmountWebSEO.clear();
+    totalAmountOthers.clear();
+    receivedAmountSEO.clear();
+    receivedAmountGBPM.clear();
+    receivedAmountVirtualTour.clear();
     receivedAmountZKSEO.clear();
+    receivedAmountGoogleAds.clear();
+    receivedAmountGoogleAdsRecharge.clear();
+    receivedAmountFacebook.clear();
+    receivedAmountFacebookRecharge.clear();
+    receivedAmountWebsite.clear();
+    receivedAmountCustomDevelopment.clear();
+    receivedAmountWebsiteAmc.clear();
+    receivedAmountProductPhotography.clear();
+    receivedAmountDomain.clear();
+    receivedAmountHosting.clear();
+    receivedAmountQrCode.clear();
+    receivedAmountWebSEO.clear();
+    receivedAmountOthers.clear();
+    validitySEO.value = '';
+    validityVirtualTour.value = '';
+    validityGBPM.value = '';
     validityZKSEO.value = '';
+    validityGoogleAds.value = '';
+    validityGoogleAdsRecharge.value = '';
+    validityFacebook.value = '';
+    validityFacebookRecharge.value = '';
+    validityWebsite.value = '';
+    validityCustomDevelopment.value = '';
+    validityWebsiteAmc.value = '';
+    validityProductPhotography.value = '';
+    validityDomain.value = '';
+    validityHosting.value = '';
+    validityQrCode.value = '';
+    validityWebSEO.value = '';
+    validityOthers.value = '';
   }
 }

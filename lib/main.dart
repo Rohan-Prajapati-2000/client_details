@@ -19,7 +19,7 @@ void main() async {
   );
 
   var cron = Cron();
-  cron.schedule(Schedule.parse('22 23 * * *'), () async {
+  cron.schedule(Schedule.parse('30 06 * * *'), () async {
     await checkSubscriptions();
   });
 
@@ -72,7 +72,7 @@ Future<void> checkSubscriptions() async {
       DateTime endDate = startDate.add(Duration(days: durationInDays));
       int remainingDays = endDate.difference(DateTime.now()).inDays;
       // print("End Date: $endDate");
-      // print("Remaining Days: $remainingDays");
+      print("Remaining Days: $remainingDays");
       // print("Validity is: ${validity ?? 'No validity data is available'}");
       try {
         if (remainingDays == 0) {

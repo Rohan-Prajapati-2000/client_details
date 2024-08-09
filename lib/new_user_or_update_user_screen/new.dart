@@ -19,7 +19,6 @@ class NewUser extends StatefulWidget {
 }
 
 class _NewUserState extends State<NewUser> {
-  bool _isLoading = false;
 
   Future<void> selectDate() async {
     DateTime? pickedDate = await showDatePicker(
