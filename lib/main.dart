@@ -19,7 +19,7 @@ void main() async {
   );
 
   var cron = Cron();
-  cron.schedule(Schedule.parse('30 06 * * *'), () async {
+  cron.schedule(Schedule.parse('30 18 * * *'), () async {
     await checkSubscriptions();
   });
 
@@ -76,9 +76,9 @@ Future<void> checkSubscriptions() async {
       // print("Validity is: ${validity ?? 'No validity data is available'}");
       try {
         if (remainingDays == 0) {
-          await sendExpiredEmail();
+          await sendExpiredEmail(email, name, serviceName, endDate);
           print('Expiry Email Send');
-        } else if(remainingDays == 7){
+        } else if(remainingDays == 15){
           await sendRenewalReminderEmail(email, name, serviceName, endDate);
           print("Renewal Reminder Email Sent");
         }
@@ -98,7 +98,12 @@ int parseValidityToDays(String validity) {
   return 0;
 }
 
-Future<void> sendExpiredEmail() async {
+Future<void> sendExpiredEmail(String email, String name, String service, var endDate) async {
+  if(email == null || email.isEmpty || name == null || name.isEmpty || service==null || service.isEmpty){
+    print('One of the parameters is null or empty');
+    return;
+  }
+
   var serviceId = 'service_rr0yw8y';
   var templateId = 'template_ehoiaoh';
   var userId = 'D5RTA0HOz54XcZTPQ';
@@ -111,12 +116,12 @@ Future<void> sendExpiredEmail() async {
     'template_id': templateId,
     'template_params': {
       'subject': 'Your Service Plan Has Expired',
-      'message': "Dear Client's Name\n\n"
-          "We hope the message finds you well. We wanted to inform you that your [Product/Service] plan"
+      'message': "Dear $name\n\n"
+          "We hope the message finds you well. We wanted to inform you that your $service plan"
           " with Help Together Group has expired as of Today\n\n"
           "Service Details: \n\n"
-          "Service Name: [Product/Service]"
-          "Expiration Date: [Expiration Date]\n"
+          "Service Name: $service\n"
+          "Expiration Date: $endDate\n"
           "We value your association with us and would love to continue providing you with our services."
           "To avoid any disruption and resume your access to the encourage you to renew your service plan.\n\n"
           "Renewal Process:\n"
@@ -130,7 +135,7 @@ Future<void> sendExpiredEmail() async {
           "Important Contacts:\n"
           "For Complaints/Support:\n"
           "(+91) 96346 44622 | support@helptogether.co.in ",
-      'to': 'rohanprajapati5212@gmail.com'
+      'to': '$email'
     },
   });
 
