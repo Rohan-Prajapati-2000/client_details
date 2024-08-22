@@ -3,6 +3,7 @@ import 'dart:core';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:practice/utils/popups/loaders.dart';
@@ -255,11 +256,9 @@ class SaveFromDataController extends GetxController {
   Future<void> saveFormDataToFirestore() async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     List<String>? imageBase64List = await uploadImageToFirestore();
-
     try {
       int highestSrNo = await _fetchHighestSrNo();
       int newSrNo = highestSrNo + 1;
-
       await firebaseFirestore.collection('client_details').doc(newSrNo.toString()).set({
         'Sr No': newSrNo.toString(),
         'Date': date.text.trim(),
@@ -618,6 +617,45 @@ class SaveFromDataController extends GetxController {
 
     saveFormDataToFirestore();
   }
+
+  /// AUTO FILL DETAILS ACCORDING TO COMPANY NAME
+  RxList<String> companyNameSuggestions = <String>[].obs;
+
+  void searchCompanyNames(String query) async{
+    if(query.isEmpty){
+      companyNameSuggestions.clear();
+      return;
+    }
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection('client_details')
+        .where('Company Name', isGreaterThanOrEqualTo: query)
+        .where('Company Name', isLessThanOrEqualTo: query + '\uf8ff')
+        .limit(10)
+        .get();
+
+    companyNameSuggestions.value =
+        snapshot.docs.map((doc)=> doc["Company Name"] as String).toList();
+  }
+
+  void fillCompanyDetails(String companyName)async{
+    final snapshot = await FirebaseFirestore
+        .instance.collection('client_details')
+        .where('Company Name', isEqualTo: companyName)
+        .limit(1)
+        .get();
+
+    if(snapshot.docs.isNotEmpty){
+      final data = snapshot.docs.first.data();
+      gstNumber.text = data['GST No'];
+      address.text = data['Address'];
+      contactPerson.text = data['Contact Person'];
+      contactEmail.text = data['Contact Email'];
+      contactNumber.text = data['Contact Number'];
+    }
+  }
+
+
 
   /// method to clear all fields
   void clearFormFields() {

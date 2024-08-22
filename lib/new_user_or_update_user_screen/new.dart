@@ -1,10 +1,13 @@
 import 'dart:typed_data';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:practice/new_user_or_update_user_screen/widgets/renew_new.dart';
 import 'package:practice/new_user_or_update_user_screen/widgets/self_tally.dart';
 import 'package:practice/utils/constants/sizes.dart';
+
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:practice/utils/validators/validator.dart';
 
 import 'controller/save_form_data_controller.dart';
 import 'widgets/image_picker.dart';
@@ -19,6 +22,8 @@ class NewUser extends StatefulWidget {
 }
 
 class _NewUserState extends State<NewUser> {
+  final controller = Get.put(SaveFromDataController());
+  final FocusNode companyNameFocusNode = FocusNode();
 
   Future<void> selectDate() async {
     DateTime? pickedDate = await showDatePicker(
@@ -38,9 +43,26 @@ class _NewUserState extends State<NewUser> {
     }
   }
 
+  Future<List<Map<String, dynamic>>> fetchCompanySuggestions(String query) async{
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('client_details')
+        .where('Company Name', isGreaterThanOrEqualTo: query)
+        .where('Company Name', isLessThanOrEqualTo: query + '\uf8ff')
+    .get();
+    return querySnapshot.docs.map((doc)=> doc.data() as Map<String, dynamic>).toList();
+  }
+
+  void fillCompanyDetails(Map<String, dynamic> companyData){
+    controller.companyName.text = companyData['Company Name'] ?? '';
+    controller.gstNumber.text = companyData['GST No'] ?? '';
+    controller.address.text = companyData['Address'] ?? '';
+    controller.contactPerson.text = companyData['Contact Person'] ?? '';
+    controller.contactEmail.text = companyData['Contact Email'] ?? '';
+    controller.contactNumber.text = companyData['Contact Number'] ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(SaveFromDataController());
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -92,24 +114,47 @@ class _NewUserState extends State<NewUser> {
                   ],
                 ),
                 const SizedBox(height: SSizes.spaceBtwItems),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
+                Obx((){
+                  return Column(
+                    children: [
+                      TextFormField(
                         controller: controller.companyName,
-                        decoration:
-                            const InputDecoration(labelText: 'Company Name'),
+                        focusNode: companyNameFocusNode,
+                        validator: (value)=>  SValidator.validateEmptyText("Company Name", value),
+                        decoration: InputDecoration(
+                          labelText: 'Company Name'
+                        ),
+                        onChanged: (value){
+                          controller.searchCompanyNames(value);
+                        },
                       ),
-                    ),
-                    Expanded(flex: 3, child: Container()),
-                  ],
-                ),
+                      if(controller.companyNameSuggestions.isNotEmpty)
+                        ListView.builder(
+                          shrinkWrap: true,
+                            itemCount: controller.companyNameSuggestions.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: Text(controller.companyNameSuggestions[index]),
+                                onTap: (){
+                                  final selectedCompanyName = controller.companyNameSuggestions[index];
+                                  controller.companyName.text = selectedCompanyName;
+                                  controller.fillCompanyDetails(selectedCompanyName);
+                                  controller.companyNameSuggestions.clear();
+                                  FocusScope.of(context).requestFocus(FocusNode());
+                                }
+                              );
+                            },
+                        )
+                    ],
+                  );
+                }),
                 const SizedBox(height: SSizes.spaceBtwItems),
                 Row(
                   children: [
                     Expanded(
                       child: TextFormField(
                         controller: controller.gstNumber,
+                        validator: (value)=>  SValidator.validateEmptyText("GST Number", value),
                         decoration:
                             const InputDecoration(labelText: 'GST Number'),
                       ),
@@ -123,6 +168,7 @@ class _NewUserState extends State<NewUser> {
                     Expanded(
                       child: TextFormField(
                         controller: controller.address,
+                        validator: (value)=>  SValidator.validateEmptyText("Address", value),
                         decoration: const InputDecoration(labelText: 'Address'),
                       ),
                     ),
@@ -135,6 +181,7 @@ class _NewUserState extends State<NewUser> {
                     Expanded(
                       child: TextFormField(
                         controller: controller.contactPerson,
+                        validator: (value)=>  SValidator.validateEmptyText("Contact Person Name", value),
                         decoration:
                             const InputDecoration(labelText: 'Contact Person'),
                       ),
@@ -148,6 +195,7 @@ class _NewUserState extends State<NewUser> {
                     Expanded(
                       child: TextFormField(
                         controller: controller.contactNumber,
+                        validator: (value)=>  SValidator.validateEmptyText("Contact Number", value),
                         decoration:
                             const InputDecoration(labelText: 'Contact Number'),
                       ),
@@ -161,6 +209,7 @@ class _NewUserState extends State<NewUser> {
                     Expanded(
                       child: TextFormField(
                         controller: controller.contactEmail,
+                        validator: (value)=>  SValidator.validateEmptyText("Contact Email", value),
                         decoration:
                             const InputDecoration(labelText: 'Contact Email'),
                       ),
@@ -197,6 +246,7 @@ class _NewUserState extends State<NewUser> {
                     Expanded(
                       child: TextFormField(
                         controller: controller.receivedAmount,
+                        validator: (value)=>  SValidator.validateEmptyText("Received Amount", value),
                         decoration:
                             const InputDecoration(labelText: 'Received Amount'),
                       ),
@@ -212,6 +262,7 @@ class _NewUserState extends State<NewUser> {
                     Expanded(
                       child: TextFormField(
                         controller: controller.bdmName,
+                        validator: (value)=>  SValidator.validateEmptyText("BDM Name", value),
                         decoration:
                             const InputDecoration(labelText: 'BDM Name'),
                       ),
@@ -225,6 +276,7 @@ class _NewUserState extends State<NewUser> {
                     Expanded(
                       child: TextFormField(
                         controller: controller.remark,
+                        validator: (value)=>  SValidator.validateEmptyText("Remark", value),
                         decoration: const InputDecoration(labelText: 'Remark'),
                       ),
                     ),
@@ -277,7 +329,9 @@ class _NewUserState extends State<NewUser> {
                             ),
                           ),
                           onPressed: () async {
-                            await controller.saveSubscriptions();
+                            if(controller.userDetailFormKey.currentState!.validate()){
+                              await controller.saveSubscriptions();
+                            }
                           },
                           child: Text('Submit',
                               style: Theme.of(context)
